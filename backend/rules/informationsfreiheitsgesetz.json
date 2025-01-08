@@ -2,75 +2,111 @@
     "rules": [
         {
             "reference": "§3 Nr. 1 lit. a)",
-            "reason": "Nachteilige Auswirkungen auf internationale Beziehungen"
+            "reason": "Nachteilige Auswirkungen auf internationale Beziehungen",
+            "title": "Internationale Beziehungen",
+            "url": "https://www.gesetze-im-internet.de/ifg/__3.html"
         },
         {
             "reference": "§3 Nr. 1 lit. b)",
-            "reason": "Nachteilige Auswirkungen auf militärische und sonstige sicherheitsempfindliche Belange der Bundeswehr"
+            "reason": "Nachteilige Auswirkungen auf militärische und sonstige sicherheitsempfindliche Belange der Bundeswehr",
+            "title": "Bundeswehr",
+            "url": "https://www.gesetze-im-internet.de/ifg/__3.html"
         },
         {
             "reference": "§3 Nr. 1 lit. c)",
-            "reason": "Nachteilige Auswirkungen auf Belange der inneren oder äußeren Sicherheit"
+            "reason": "Nachteilige Auswirkungen auf Belange der inneren oder äußeren Sicherheit",
+            "title": "Innere/äußere Sicherheit",
+            "url": "https://www.gesetze-im-internet.de/ifg/__3.html"
         },
         {
             "reference": "§3 Nr. 1 lit. d)",
-            "reason": "Nachteilige Auswirkungen auf Kontroll- oder Aufsichtsaufgaben der Finanz-, Wettbewerbs- und Regulierungsbehörden"
+            "reason": "Nachteilige Auswirkungen auf Kontroll- oder Aufsichtsaufgaben der Finanz-, Wettbewerbs- und Regulierungsbehörden",
+            "title": "Kontroll-/Aufsichtsaufgaben",
+            "url": "https://www.gesetze-im-internet.de/ifg/__3.html"
         },
         {
             "reference": "§3 Nr. 1 lit. e)",
-            "reason": "Nachteilige Auswirkungen auf Angelegenheiten der externen Finanzkontrolle"
+            "reason": "Nachteilige Auswirkungen auf Angelegenheiten der externen Finanzkontrolle",
+            "title": "Externe Finanzkontrolle",
+            "url": "https://www.gesetze-im-internet.de/ifg/__3.html"
         },
         {
             "reference": "§3 Nr. 1 lit. f)",
-            "reason": "Nachteilige Auswirkungen auf Maßnahmen zum Schutz vor unerlaubtem Außenwirtschaftsverkehr"
+            "reason": "Nachteilige Auswirkungen auf Maßnahmen zum Schutz vor unerlaubtem Außenwirtschaftsverkehr",
+            "title": "Außenwirtschaftsverkehr",
+            "url": "https://www.gesetze-im-internet.de/ifg/__3.html"
         },
         {
             "reference": "§3 Nr. 1 lit. g)",
-            "reason": "Nachteilige Auswirkungen auf die Durchführung eines laufenden Gerichtsverfahrens, den Anspruch auf ein faires Verfahren oder die Durchführung von Ermittlungen"
+            "reason": "Nachteilige Auswirkungen auf die Durchführung eines laufenden Gerichtsverfahrens, den Anspruch auf ein faires Verfahren oder die Durchführung von Ermittlungen",
+            "title": "Laufende Gerichtsverfahren",
+            "url": "https://www.gesetze-im-internet.de/ifg/__3.html"
         },
         {
             "reference": "§3 Nr. 2",
-            "reason": "Gefährdung der öffentlichen Sicherheit"
+            "reason": "Gefährdung der öffentlichen Sicherheit",
+            "title": "Öffentliche Sicherheit",
+            "url": "https://www.gesetze-im-internet.de/ifg/__3.html"
         },
         {
             "reference": "§3 Nr. 3 lit. a)",
-            "reason": "Beeinträchtigung der notwendigen Vertraulichkeit internationaler Verhandlungen"
+            "reason": "Beeinträchtigung der notwendigen Vertraulichkeit internationaler Verhandlungen",
+            "title": "Internationale Verhandlungen",
+            "url": "https://www.gesetze-im-internet.de/ifg/__3.html"
         },
         {
             "reference": "§3 Nr. 3 lit. b)",
-            "reason": "Beeinträchtigung der Beratungen von Behörden"
+            "reason": "Beeinträchtigung der Beratungen von Behörden",
+            "title": "Beratungen von Behörden",
+            "url": "https://www.gesetze-im-internet.de/ifg/__3.html"
         },
         {
             "reference": "§3 Nr. 4",
-            "reason": "Geheimhaltungspflicht / Vertraulichkeitspflicht / Berufsgeheimnis / besonderes Amtsgeheimnis"
+            "reason": "Geheimhaltungspflicht / Vertraulichkeitspflicht / Berufsgeheimnis / besonderes Amtsgeheimnis",
+            "title": "Geheimhaltungspflicht",
+            "url": "https://www.gesetze-im-internet.de/ifg/__3.html"
         },
         {
             "reference": "§3 Nr. 5",
-            "reason": "Vorübergehend beigezogene Information einer anderen öffentlichen Stelle"
+            "reason": "Vorübergehend beigezogene Information einer anderen öffentlichen Stelle",
+            "title": "Vorübergehende Information",
+            "url": "https://www.gesetze-im-internet.de/ifg/__3.html"
         },
         {
             "reference": "§3 Nr. 6",
-            "reason": "Beeinträchtigung fiskalischer Interessen des Bundes im Wirtschaftsverkehr oder wirtschaftlicher Interessen der Sozialversicherungen"
+            "reason": "Beeinträchtigung fiskalischer Interessen des Bundes im Wirtschaftsverkehr oder wirtschaftlicher Interessen der Sozialversicherungen",
+            "title": "Fiskalische Interessen",
+            "url": "https://www.gesetze-im-internet.de/ifg/__3.html"
         },
         {
             "reference": "§3 Nr. 7",
-            "reason": "Vertraulich erhobene oder übermittelte Information mit fortbestehendem Vertraulichkeitsinteresse"
+            "reason": "Vertraulich erhobene oder übermittelte Information mit fortbestehendem Vertraulichkeitsinteresse",
+            "title": "Vertraulichkeit",
+            "url": "https://www.gesetze-im-internet.de/ifg/__3.html"
         },
         {
             "reference": "§4 Abs. 1",
-            "reason": "Vereitlung von vorbereiteten Entscheidungen oder Maßnahmen"
+            "reason": "Vereitlung von vorbereiteten Entscheidungen oder Maßnahmen",
+            "title": "Vereitlung von Entscheidungen",
+            "url": "https://www.gesetze-im-internet.de/ifg/__4.html"
         },
         {
             "reference": "§5",
-            "reason": "Personenbezogene Daten"
+            "reason": "Personenbezogene Daten",
+            "title": "Personenbezogene Daten",
+            "url": "https://www.gesetze-im-internet.de/ifg/__5.html"
         },
         {
             "reference": "§6 S. 1",
-            "reason": "Schutz geistigen Eigentums"
+            "reason": "Schutz geistigen Eigentums",
+            "title": "Geistiges Eigentum",
+            "url": "https://www.gesetze-im-internet.de/ifg/__6.html"
         },
         {
             "reference": "§6 S. 2",
-            "reason": "Betriebs- und Geschäftsgeheimnisse"
+            "reason": "Betriebs- und Geschäftsgeheimnisse",
+            "title": "Betriebs-/Geschäftsgeheimnisse",
+            "url": "https://www.gesetze-im-internet.de/ifg/__6.html"
         }
     ]
 }
