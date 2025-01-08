@@ -14,7 +14,7 @@ import type {
 } from "react-pdf-highlighter";
 
 import { Sidebar } from "./Sidebar";
-import { Spinner } from "./Spinner";
+import { Spinner } from "./components/Spinner";
 
 import "./style/App.css";
 import "../node_modules/react-pdf-highlighter/dist/style.css";
@@ -55,8 +55,8 @@ export function App() {
   const scrollToHighlightFromHash = useCallback(() => {
     const highlightId = parseIdFromHash();
     if (!highlightId) return;
-    
-    const highlight = highlights.find(h => h.id === highlightId);
+
+    const highlight = highlights.find((h) => h.id === highlightId);
     if (highlight) {
       // Add a small delay to ensure the PDF is ready
       setTimeout(() => {
@@ -71,7 +71,7 @@ export function App() {
       window.removeEventListener(
         "hashchange",
         scrollToHighlightFromHash,
-        false,
+        false
       );
     };
   }, [scrollToHighlightFromHash]);
@@ -84,14 +84,15 @@ export function App() {
     // PDF standard dimensions (A4)
     const PDF_WIDTH = 595.32;
     const PDF_HEIGHT = 841.92;
-    
+
     // Get current viewport dimensions
-    const { width: viewportWidth, height: viewportHeight } = highlight.position.boundingRect;
-    
+    const { width: viewportWidth, height: viewportHeight } =
+      highlight.position.boundingRect;
+
     // Calculate scale factors
     const scaleX = PDF_WIDTH / viewportWidth;
     const scaleY = PDF_HEIGHT / viewportHeight;
-    
+
     // Convert coordinates
     const enrichedHighlight = {
       ...highlight,
@@ -106,7 +107,7 @@ export function App() {
           width: PDF_WIDTH,
           height: PDF_HEIGHT,
         },
-        rects: highlight.position.rects.map(rect => ({
+        rects: highlight.position.rects.map((rect) => ({
           ...rect,
           x1: rect.x1 * scaleX,
           y1: rect.y1 * scaleY,
@@ -114,18 +115,18 @@ export function App() {
           y2: rect.y2 * scaleY,
           width: PDF_WIDTH,
           height: PDF_HEIGHT,
-        }))
+        })),
       },
-      id: getNextId()
+      id: getNextId(),
     };
 
-    setHighlights(prevHighlights => [enrichedHighlight, ...prevHighlights]);
+    setHighlights((prevHighlights) => [enrichedHighlight, ...prevHighlights]);
   };
 
   const updateHighlight = (
     highlightId: string,
     position: Partial<ScaledPosition>,
-    content: Partial<Content>,
+    content: Partial<Content>
   ) => {
     setHighlights((prevHighlights) =>
       prevHighlights.map((h) => {
@@ -143,7 +144,7 @@ export function App() {
               ...rest,
             }
           : h;
-      }),
+      })
     );
   };
 
@@ -164,16 +165,21 @@ export function App() {
   }, [uploadedPdfUrl]);
 
   const deleteHighlight = useCallback((id: string) => {
-    setHighlights(prevHighlights => prevHighlights.filter(hl => hl.id !== id));
+    setHighlights((prevHighlights) =>
+      prevHighlights.filter((hl) => hl.id !== id)
+    );
   }, []);
 
-  const handleBackendHighlights = useCallback((newHighlights: Array<IHighlight>) => {
-    setHighlights(prevHighlights => [...prevHighlights, ...newHighlights]);
-  }, []);
+  const handleBackendHighlights = useCallback(
+    (newHighlights: Array<IHighlight>) => {
+      setHighlights((prevHighlights) => [...prevHighlights, ...newHighlights]);
+    },
+    []
+  );
 
   return (
     <div className="App" style={{ display: "flex", height: "100vh" }}>
-      <div 
+      <div
         style={{
           position: "fixed",
           top: 0,
@@ -185,12 +191,15 @@ export function App() {
           textAlign: "center",
           zIndex: 1000,
           borderBottom: "1px solid #ffeeba",
-          fontSize: "14px"
+          fontSize: "14px",
         }}
       >
-        <span role="img" aria-label="warning">⚠️</span>
-        <strong>DISCLAIMER</strong>: This software is currently in development and not yet ready for production use. 
-        Use at your own risk and always verify redactions manually.
+        <span role="img" aria-label="warning">
+          ⚠️
+        </span>
+        <strong>DISCLAIMER</strong>: This software is currently in development
+        and not yet ready for production use. Use at your own risk and always
+        verify redactions manually.
       </div>
       <Sidebar
         highlights={highlights}
@@ -230,11 +239,16 @@ export function App() {
                       scrollToHighlightFromHash();
                     }
                   }}
-                  onSelectionFinished={(position, content, hideTipAndSelection, transformSelection) => {
+                  onSelectionFinished={(
+                    position,
+                    content,
+                    hideTipAndSelection,
+                    transformSelection
+                  ) => {
                     addHighlight({
                       content,
                       position,
-                      comment: { text: "", emoji: "" }
+                      comment: { text: "", emoji: "" },
                     });
                     return null;
                   }}
@@ -245,7 +259,7 @@ export function App() {
                     hideTip,
                     viewportToScaled,
                     screenshot,
-                    isScrolledTo,
+                    isScrolledTo
                   ) => {
                     const isTextHighlight = !highlight.content?.image;
 
@@ -266,7 +280,7 @@ export function App() {
                             updateHighlight(
                               highlight.id,
                               { boundingRect: viewportToScaled(boundingRect) },
-                              { image: screenshot(boundingRect) },
+                              { image: screenshot(boundingRect) }
                             );
                           }}
                         />

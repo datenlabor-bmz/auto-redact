@@ -1,78 +1,82 @@
 body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-      "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-      sans-serif;
-    background-color: #ffffff;
-    color: #fff;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  background-color: #ffffff;
+  color: #fff;
+}
+
+.sidebar {
+  overflow: auto;
+  color: rgb(119, 119, 119);
+  background: linear-gradient(
+    rgb(245, 245, 245),
+    rgb(248, 248, 248) 46px,
+    rgb(250, 250, 250) 120px,
+    rgb(245, 245, 245) 35%,
+    rgb(246, 246, 246)
+  );
+}
+
+.pdf-viewer {
+  background-color: rgb(238, 238, 238);
+}
+
+.sidebar__highlights {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.highlight__location {
+  font-size: 10px;
+  color: #666;
+}
+
+.highlight__image {
+  overflow: auto;
+  max-width: 300px;
+  border: 1px dashed;
+}
+
+.sidebar__highlight {
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: background 140ms ease-in;
+  border-bottom: 1px solid rgb(119, 119, 119);
+}
+
+.sidebar__highlight:hover {
+  background: rgba(58, 56, 52, 0.08);
+}
+
+a {
+  color: #d35400;
+}
+
+blockquote {
+  padding: 0;
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  color: #444;
+}
+
+.spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
-  
-  .sidebar {
-    overflow: auto;
-    color: rgb(119, 119, 119);
-    background: linear-gradient(
-      rgb(245, 245, 245),
-      rgb(248, 248, 248) 46px,
-      rgb(250, 250, 250) 120px,
-      rgb(245, 245, 245) 35%,
-      rgb(246, 246, 246)
-    );
+  100% {
+    transform: rotate(360deg);
   }
-  
-  .pdf-viewer {
-    background-color: rgb(238, 238, 238);
-  }
-  
-  .sidebar__highlights {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .highlight__location {
-    font-size: 10px;
-    color: #666;
-  }
-  
-  .highlight__image {
-    overflow: auto;
-    max-width: 300px;
-    border: 1px dashed;
-  }
-  
-  .sidebar__highlight {
-    padding: 0.5rem;
-    cursor: pointer;
-    transition: background 140ms ease-in;
-    border-bottom: 1px solid rgb(119, 119, 119);
-  }
-  
-  .sidebar__highlight:hover {
-    background: rgba(58, 56, 52, 0.08);
-  }
-  
-  a {
-    color: #d35400;
-  }
-  
-  blockquote {
-    padding: 0;
-    margin: 0;
-    font-size: 0.8rem;
-    line-height: 1.2;
-    color: #444;
-  }
-  
-  .spinner-small {
-    width: 16px;
-    height: 16px;
-    border: 2px solid #f3f3f3;
-    border-top: 2px solid #3498db;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+}
