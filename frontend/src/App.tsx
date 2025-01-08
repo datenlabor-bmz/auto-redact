@@ -270,7 +270,9 @@ export function App() {
           fontSize: "14px"
         }}
       >
-        ⚠️ Development Notice: This software is in early development and not yet ready for production use. Features may be incomplete or unstable.
+        <span role="img" aria-label="warning">⚠️</span>
+        <strong>DISCLAIMER</strong>: This software is currently in development and not yet ready for production use. 
+        Use at your own risk and always verify redactions manually.
       </div>
       <Sidebar
         highlights={highlights}

@@ -1,5 +1,6 @@
 import type { IHighlight } from "react-pdf-highlighter";
 import React, { useState } from "react";
+import { FileUpload } from "./components/FileUpload";
 
 interface Props {
   highlights: Array<IHighlight>;
@@ -36,9 +37,9 @@ export function Sidebar({
   onAnalyzePdf,
   isAnalyzing,
 }: Props) {
-  const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const fileUrl = URL.createObjectURL(file);
@@ -58,9 +59,6 @@ export function Sidebar({
         }
 
         const analysisResult = await response.json();
-        console.log("analysisResult", analysisResult);
-
-        // Convert backend highlights to frontend format
         const convertedHighlights = Object.entries(analysisResult).flatMap(
           ([pageNum, highlights]: [string, any[]]) =>
             highlights.map((h: any) => {
@@ -166,72 +164,59 @@ export function Sidebar({
   };
 
   return (
-    <div className="sidebar" style={{ width: "25vw" }}>
-      <div style={{ padding: "1rem" }}>
         <div
+      className="sidebar"
           style={{
+        width: "20%",
+        minWidth: "250px",
+        padding: "2rem",
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "1rem",
+        flexDirection: "column",
+        gap: "2rem",
+        backgroundColor: "#f8fafc",
+        borderRight: "1px solid #e2e8f0",
           }}
         >
-          <h3 style={{ margin: 0 }}>AutoRedact</h3>
-          <a
-            href="https://github.com/davidpomerenke/securedact/tree/autoredact"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              color: "#666",
-              textDecoration: "none",
+      {/* Header */}
+      <div style={{ borderBottom: "1px solid #e2e8f0", paddingBottom: "1.5rem" }}>
+        <div style={{
               display: "flex",
               alignItems: "center",
-              gap: "4px",
+          gap: "0.5rem",
+          fontSize: "1.5rem",
+          fontWeight: "700",
+          color: "#1e293b",
+        }}>
+          <span>⬛️</span>
+          <span style={{ color: "#0f172a" }}>AutoRedact</span>
+        </div>
+        <div style={{
               fontSize: "0.9rem",
-            }}
-          >
-            <svg height="20" width="20" viewBox="0 0 16 16" version="1.1">
-              <path
-                fillRule="evenodd"
-                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
-                fill="currentColor"
-              ></path>
-            </svg>
-          </a>
+          color: "#3b82f6",
+          marginTop: "0.5rem",
+        }}>
+          AI-assisted document redaction
         </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label
-            htmlFor="pdf-upload"
-            style={{
-              display: "block",
-              marginBottom: "0.5rem",
-              color: "#333",
-              fontFamily:
-                "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-            }}
-          >
-            Choose a PDF to get started:
-          </label>
-          <input
-            id="pdf-upload"
-            type="file"
-            accept="application/pdf"
-            onChange={handleFileUpload}
-            style={{ width: "100%" }}
-          />
-        </div>
+      </div>
+
+      {/* Main Content */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <FileUpload
+          onFileUpload={handleFileUpload}
+          currentFileName={currentPdfFile?.name}
+        />
 
         {currentPdfFile && (
+          <>
           <div style={{ marginBottom: "1rem" }}>
             <label
               htmlFor="prompt-input"
               style={{
                 display: "block",
                 marginBottom: "0.5rem",
-                color: "#333",
+                  color: "#1e293b",
                 fontSize: "0.9rem",
-                fontFamily:
-                  "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+                  fontWeight: "600",
               }}
             >
               AI Redaction Prompt:
@@ -256,33 +241,38 @@ export function Sidebar({
                 width: "100%",
                 minHeight: "70px",
                 marginBottom: "0.5rem",
-                padding: "0.5rem",
-                fontSize: "0.7rem",
+                  padding: "0.75rem",
+                  fontSize: "0.85rem",
                 fontFamily: "Monaco, Consolas, 'Courier New', monospace",
                 lineHeight: "1.4",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "6px",
                 resize: "none",
                 boxSizing: "border-box",
                 overflow: "hidden",
+                  backgroundColor: "#fff",
+                  color: "#1e293b",
               }}
             />
             <button
               onClick={onAnalyzePdf}
               disabled={isAnalyzing}
               style={{
-                marginBottom: "1rem",
-                padding: "0.5rem",
                 width: "100%",
+                  padding: "0.75rem",
                 fontSize: "0.9rem",
-                fontFamily:
-                  "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+                  fontWeight: "500",
+                  color: "#fff",
+                  backgroundColor: "#3b82f6",
+                  border: "none",
+                  borderRadius: "6px",
                 cursor: isAnalyzing ? "not-allowed" : "pointer",
                 opacity: isAnalyzing ? 0.7 : 1,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 gap: "8px",
+                  transition: "all 0.2s ease",
               }}
             >
               {isAnalyzing ? (
@@ -294,96 +284,138 @@ export function Sidebar({
                 "Get AI Redactions"
               )}
             </button>
-            <div style={{ marginBottom: "1rem" }}>
-              <div
-                style={{
-                  padding: "0.5rem",
-                  backgroundColor: "#f5f5f5",
-                  borderRadius: "4px",
-                  fontSize: "0.8rem",
-                  color: "#666",
-                }}
-              >
-                <strong>Tip:</strong> Hold Alt and drag to create rectangular
-                selections
-              </div>
             </div>
-          </div>
+
+            <div style={{
+              padding: "1.25rem",
+              backgroundColor: "#fff",
+              borderRadius: "8px",
+              fontSize: "0.85rem",
+              color: "#1e293b",
+              border: "1px solid #e2e8f0",
+              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+            }}>
+              <div style={{ marginBottom: "0.75rem", fontWeight: "600" }}>
+                💡 How to create redactions:
+              </div>
+              <ul style={{
+                margin: "0",
+                paddingLeft: "1.2rem",
+                lineHeight: "1.4",
+              }}>
+                <li>Select text with your mouse to redact specific content</li>
+                <li>Hold Alt and drag to redact rectangular areas</li>
+                <li>All highlights will be converted to redactions when saving</li>
+              </ul>
+            </div>
+          </>
         )}
 
         {highlights.length > 0 && (
+          <>
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "0.5rem",
+            }}>
+              <div style={{ fontWeight: 600, color: "#1e293b" }}>
+                Redactions
+              </div>
           <button
             onClick={resetHighlights}
             style={{
-              marginBottom: "1rem",
-              padding: "0.5rem",
-              width: "100%",
+                  background: "none",
+                  border: "none",
+                  padding: "0.4rem 0.6rem",
+                  fontSize: "0.75rem",
+                  color: "#64748b",
+                  cursor: "pointer",
+                  borderRadius: "4px",
             }}
           >
-            Reset Redactions
+                🗑️ Reset all
           </button>
-        )}
-        {highlights.length > 0 && currentPdfFile && (
+            </div>
+
+            {currentPdfFile && (
           <button
             onClick={handleSave}
             style={{
-              marginBottom: "1rem",
-              padding: "0.5rem",
               width: "100%",
+                  padding: "0.75rem",
+                  fontSize: "0.9rem",
+                  fontWeight: "500",
+                  color: "#1e293b",
+                  backgroundColor: "#f1f5f9",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
             }}
           >
             Save Redacted PDF
           </button>
         )}
-      </div>
-      {highlights.length > 0 ? (
-        <ul className="sidebar__highlights">
-          {sortedHighlights.map((highlight, index) => (
-            <li key={highlight.id} className="sidebar__highlight">
-              <div
+
+            <ul className="sidebar__highlights" style={{
+              backgroundColor: "#ffffff",
+              padding: "1rem",
+              borderRadius: "8px",
+              boxShadow: "0 2px 6px rgba(0, 0, 0, 0.06)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.75rem",
+            }}>
+              {sortedHighlights.map((highlight) => (
+                <li
+                  key={highlight.id}
+                  className="sidebar__highlight"
                 style={{
+                    padding: "0.75rem",
+                    backgroundColor: "#f0f9ff",
+                    borderRadius: "6px",
+                    border: "1px solid #bfdbfe",
+                  }}
+                >
+                  <div style={{
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "flex-start",
                   gap: "8px",
-                }}
-              >
+                  }}>
                 <div
                   style={{ flex: 1, cursor: "pointer" }}
-                  onClick={() => {
-                    updateHash(highlight);
-                  }}
+                      onClick={() => updateHash(highlight)}
                 >
-                  <div
-                    style={{
+                      <div style={{
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "baseline",
                       gap: "8px",
-                    }}
-                  >
-                    {highlight.content.text ? (
-                      <blockquote style={{ flex: 1 }}>
+                      }}>
+                        {highlight.content.text && (
+                          <blockquote style={{
+                            flex: 1,
+                            margin: 0,
+                            fontSize: "0.85rem",
+                            lineHeight: "1.4",
+                            color: "#334155",
+                          }}>
                         {highlight.content.text.length > 60
                           ? `${highlight.content.text.slice(0, 60).trim()}…`
                           : highlight.content.text.trim()}
                       </blockquote>
-                    ) : null}
-                    <div
-                      className="highlight__location"
-                      style={{ whiteSpace: "nowrap" }}
-                    >
+                        )}
+                        <div style={{
+                          whiteSpace: "nowrap",
+                          fontSize: "0.75rem",
+                          color: "#64748b",
+                          fontWeight: "500",
+                        }}>
                       Page {highlight.position.pageNumber}
                     </div>
                   </div>
-                  {highlight.content.image ? (
-                    <div
-                      className="highlight__image"
-                      style={{ marginTop: "0.25rem" }}
-                    >
-                      <img src={highlight.content.image} alt={"Screenshot"} />
-                    </div>
-                  ) : null}
                 </div>
                 <button
                   onClick={() => onDeleteHighlight?.(highlight.id)}
@@ -391,9 +423,9 @@ export function Sidebar({
                     background: "none",
                     border: "none",
                     cursor: "pointer",
-                    fontSize: "14px",
+                        fontSize: "1.1rem",
                     padding: "0 4px",
-                    color: "#666",
+                        color: "#94a3b8",
                     lineHeight: 1,
                   }}
                   title="Remove redaction"
@@ -404,11 +436,141 @@ export function Sidebar({
             </li>
           ))}
         </ul>
-      ) : (
-        <div style={{ padding: "1rem", color: "#666", textAlign: "center" }}>
-          No redactions yet
+          </>
+        )}
         </div>
-      )}
+
+      <div
+        style={{
+          paddingTop: "1.5rem",
+          borderTop: "1px solid #e2e8f0",
+          fontSize: "0.85rem",
+          color: "#3b82f6",
+          marginTop: "auto",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "0.75rem",
+          }}
+        >
+          <div
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              padding: "0.4rem 0.6rem",
+              borderRadius: "6px",
+              cursor: "help",
+              position: "relative",
+              backgroundColor: showTooltip ? "#f3f4f6" : "transparent",
+              transition: "all 0.2s ease",
+            }}
+          >
+            <span style={{ fontSize: "1.2rem" }}>🇩🇪</span>
+            <span style={{ fontSize: "1.2rem" }}>🇪🇺</span>
+            <span style={{ fontSize: "1.2rem" }}>🇺🇳</span>
+            {showTooltip && (
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "calc(100% + 12px)",
+                  left: 0,
+                  backgroundColor: "white",
+                  color: "#374151",
+                  padding: "1rem 1.25rem",
+                  borderRadius: "12px",
+                  fontSize: "0.75rem",
+                  lineHeight: "1.5",
+                  width: "220px",
+                  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.12)",
+                  border: "1px solid #e5e7eb",
+                  zIndex: 10,
+                  animation: "tooltipFade 0.2s ease-out",
+                }}
+              >
+                <div
+                  style={{
+                    marginBottom: "0.75rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <span style={{ fontSize: "1.1rem" }}>🇩🇪</span>
+                  Made in Germany
+                </div>
+                <div
+                  style={{
+                    marginBottom: "0.75rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <span style={{ fontSize: "1.1rem" }}>🇪🇺</span>
+                  With European privacy
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <span style={{ fontSize: "1.1rem" }}>🇺🇳</span>
+                  As a Digital Public Good
+                </div>
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: "-6px",
+                    left: "20px",
+                    transform: "rotate(45deg)",
+                    width: "12px",
+                    height: "12px",
+                    backgroundColor: "white",
+                    border: "1px solid #e5e7eb",
+                    borderTop: "none",
+                    borderLeft: "none",
+                  }}
+                />
+              </div>
+            )}
+          </div>
+
+          <a
+            href="https://github.com/davidpomerenke/securedact"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "0.4rem 0.6rem",
+              borderRadius: "6px",
+              transition: "all 0.2s ease",
+              fontSize: "1.2rem",
+              color: "#666",
+              textDecoration: "none",
+              backgroundColor: "transparent",
+            }}
+          >
+            <svg
+              height="20"
+              width="20"
+              viewBox="0 0 16 16"
+              style={{ fill: "currentColor" }}
+            >
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
