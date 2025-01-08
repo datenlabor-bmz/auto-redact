@@ -1,4 +1,6 @@
 import * as React from "react";
+import { useLanguage } from "../contexts/LanguageContext";
+import { t } from "../translations";
 
 interface PromptInputProps {
   customPrompt: string;
@@ -18,9 +20,9 @@ export function PromptInput({
   onAnalyzePdf,
   isAnalyzing,
 }: PromptInputProps) {
+  const { language } = useLanguage();
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
 
-  // Adjust height whenever customPrompt changes or on mount
   React.useEffect(() => {
     if (textareaRef.current) {
       adjustTextareaHeight(textareaRef.current);
@@ -39,7 +41,7 @@ export function PromptInput({
           fontWeight: "600",
         }}
       >
-        Instructions for the AI:
+        {t(language, "promptInput.label")}
       </label>
       <textarea
         ref={textareaRef}
@@ -99,10 +101,10 @@ export function PromptInput({
         {isAnalyzing ? (
           <>
             <div className="spinner-small" />
-            Analyzing PDF...
+            {t(language, "promptInput.button.analyzing")}
           </>
         ) : (
-          "Get AI Redactions"
+          t(language, "promptInput.button.analyze")
         )}
       </button>
     </div>

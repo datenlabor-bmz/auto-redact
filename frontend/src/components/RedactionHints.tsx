@@ -1,6 +1,11 @@
 import * as React from "react";
+import { useLanguage } from "../contexts/LanguageContext";
+import { translations, t } from "../translations";
 
 export function RedactionHints() {
+  const { language } = useLanguage();
+  const hints = translations[language].redactionHints.hints;
+  
   return (
     <div
       style={{
@@ -14,7 +19,7 @@ export function RedactionHints() {
       }}
     >
       <div style={{ marginBottom: "0.75rem", fontWeight: "600" }}>
-        💡 Making manual redactions:
+        {t(language, "redactionHints.title")}
       </div>
       <ul
         style={{
@@ -23,17 +28,9 @@ export function RedactionHints() {
           lineHeight: "1.4",
         }}
       >
-        <li>Select text with your mouse</li>
-        <li>Hold the <kbd style={{
-          backgroundColor: "#f1f5f9",
-          border: "1px solid #e2e8f0",
-          borderRadius: "4px",
-          boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
-          padding: "2px 6px",
-          fontFamily: "inherit",
-          fontSize: "0.8em",
-          color: "#475569"
-        }}>Alt</kbd> key to draw larger redaction boxes</li>
+        {hints.map((hint: string, index: number) => (
+          <li key={index}>{hint}</li>
+        ))}
       </ul>
     </div>
   );

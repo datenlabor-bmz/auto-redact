@@ -7,6 +7,8 @@ import { FileUpload } from "./components/FileUpload";
 import { PromptInput } from "./components/PromptInput";
 import { RedactionHints } from "./components/RedactionHints";
 import { SidebarFooter } from "./components/SidebarFooter";
+import { useLanguage } from "./contexts/LanguageContext";
+import { t } from "./translations";
 
 interface Props {
   highlights: Array<IHighlight>;
@@ -30,6 +32,7 @@ const updateHash = (highlight: IHighlight) => {
 export function Sidebar({
   highlights,
   resetHighlights,
+  toggleDocument,
   onFileUpload,
   onDeleteHighlight,
   onBackendHighlights,
@@ -40,13 +43,11 @@ export function Sidebar({
   setIsAnalyzing,
   setHighlights,
 }: Props) {
+  const { language } = useLanguage();
   const sortedHighlights = [...highlights].sort((a, b) => {
-    // First sort by page number
     if (a.position.pageNumber !== b.position.pageNumber) {
       return a.position.pageNumber - b.position.pageNumber;
     }
-
-    // If on same page, sort by vertical position (top to bottom)
     return a.position.boundingRect.y1 - b.position.boundingRect.y1;
   });
 
@@ -76,19 +77,19 @@ export function Sidebar({
             fontSize: "1.5rem",
             fontWeight: "700",
             color: "#1e293b",
+            marginBottom: "0.5rem",
           }}
         >
           <span>⬛️</span>
-          <span style={{ color: "#0f172a" }}>AutoRedact</span>
+          <span style={{ color: "#0f172a" }}>{t(language, "app.title")}</span>
         </div>
         <div
           style={{
             fontSize: "0.9rem",
             color: "#3b82f6",
-            marginTop: "0.5rem",
           }}
         >
-          AI-assisted document redaction
+          {t(language, "app.subtitle")}
         </div>
       </div>
 
@@ -131,7 +132,7 @@ export function Sidebar({
               }}
             >
               <div style={{ fontWeight: 600, color: "#1e293b" }}>
-                Redactions
+                {t(language, "redactions.title")}
               </div>
               <button
                 onClick={resetHighlights}
@@ -145,7 +146,7 @@ export function Sidebar({
                   borderRadius: "4px",
                 }}
               >
-                🗑️ Reset all
+                {t(language, "redactions.resetAll")}
               </button>
             </div>
 

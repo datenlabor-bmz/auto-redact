@@ -17,6 +17,8 @@ import type {
 import { Sidebar } from "./Sidebar";
 import { Spinner } from "./components/Spinner";
 import { Disclaimer } from "./components/Disclaimer";
+import { LanguageProvider } from "./contexts/LanguageContext";
+import { LanguageSelector } from "./components/LanguageSelector";
 
 import "./style/App.css";
 import "../node_modules/react-pdf-highlighter/dist/style.css";
@@ -30,7 +32,7 @@ const resetHash = () => {
   document.location.hash = "";
 };
 
-export function App() {
+function AppContent() {
   const [url, setUrl] = useState<string | null>(null);
   const [highlights, setHighlights] = useState<Array<IHighlight>>([]);
   const [uploadedPdfUrl, setUploadedPdfUrl] = useState<string | null>(null);
@@ -213,72 +215,69 @@ export function App() {
         >
           {url ? (
             <PdfLoader url={url} beforeLoad={<Spinner />}>
-              {(pdfDocument) => {
-                return (
-                  <PdfHighlighter
-                    pdfDocument={pdfDocument}
-                    pdfScaleValue="page-width"
-                    enableAreaSelection={(event) => event.altKey}
-                    onScrollChange={resetHash}
-                    scrollRef={(scrollTo) => {
-                      scrollViewerTo.current = scrollTo;
-                      // Only call scroll if there's a hash present
-                      if (document.location.hash) {
-                        scrollToHighlightFromHash();
-                      }
-                    }}
-                    onSelectionFinished={(
-                      position,
+              {(pdfDocument) => (
+                <PdfHighlighter
+                  pdfDocument={pdfDocument}
+                  pdfScaleValue="page-width"
+                  enableAreaSelection={(event) => event.altKey}
+                  onScrollChange={resetHash}
+                  scrollRef={(scrollTo) => {
+                    scrollViewerTo.current = scrollTo;
+                    if (document.location.hash) {
+                      scrollToHighlightFromHash();
+                    }
+                  }}
+                  onSelectionFinished={(
+                    position,
+                    content,
+                    _hideTipAndSelection,
+                    _transformSelection
+                  ) => {
+                    addHighlight({
                       content,
-                      _hideTipAndSelection,
-                      _transformSelection
-                    ) => {
-                      addHighlight({
-                        content,
-                        position,
-                        comment: { text: "", emoji: "" },
-                      });
-                      return null;
-                    }}
-                    highlightTransform={(
-                      highlight,
-                      _index,
-                      _setTip,
-                      _hideTip,
-                      viewportToScaled,
-                      screenshot,
-                      isScrolledTo
-                    ) => {
-                      const isTextHighlight = !highlight.content?.image;
+                      position,
+                      comment: { text: "", emoji: "" },
+                    });
+                    return null;
+                  }}
+                  highlightTransform={(
+                    highlight,
+                    _index,
+                    _setTip,
+                    _hideTip,
+                    viewportToScaled,
+                    screenshot,
+                    isScrolledTo
+                  ) => {
+                    const isTextHighlight = !highlight.content?.image;
 
-                      return isTextHighlight ? (
-                        <div onClick={() => deleteHighlight(highlight.id)}>
-                          <Highlight
-                            isScrolledTo={isScrolledTo}
-                            position={highlight.position}
-                            comment={highlight.comment}
-                          />
-                        </div>
-                      ) : (
-                        <div onClick={() => deleteHighlight(highlight.id)}>
-                          <AreaHighlight
-                            isScrolledTo={isScrolledTo}
-                            highlight={highlight}
-                            onChange={(boundingRect) => {
-                              updateHighlight(
-                                highlight.id,
-                                { boundingRect: viewportToScaled(boundingRect) },
-                                { image: screenshot(boundingRect) }
-                              );
-                            }}
-                          />
-                        </div>
-                      );
-                    }}
-                    highlights={highlights}
-                  />
-                );
-              }}
+                    return isTextHighlight ? (
+                      <div onClick={() => deleteHighlight(highlight.id)}>
+                        <Highlight
+                          isScrolledTo={isScrolledTo}
+                          position={highlight.position}
+                          comment={highlight.comment}
+                        />
+                      </div>
+                    ) : (
+                      <div onClick={() => deleteHighlight(highlight.id)}>
+                        <AreaHighlight
+                          isScrolledTo={isScrolledTo}
+                          highlight={highlight}
+                          onChange={(boundingRect) => {
+                            updateHighlight(
+                              highlight.id,
+                              { boundingRect: viewportToScaled(boundingRect) },
+                              { image: screenshot(boundingRect) }
+                            );
+                          }}
+                        />
+                      </div>
+                    );
+                  }}
+                  highlights={highlights}
+                />
+              )}
             </PdfLoader>
           ) : (
             <div />
@@ -286,5 +285,13 @@ export function App() {
         </div>
       </div>
     </div>
+  );
+}
+
+export function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }

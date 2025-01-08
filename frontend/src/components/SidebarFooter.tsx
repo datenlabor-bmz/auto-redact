@@ -1,27 +1,36 @@
 import { useState } from "react";
 import * as React from "react";
+import { useLanguage } from "../contexts/LanguageContext";
+import { LanguageSelector } from "./LanguageSelector";
+import { t } from "../translations";
 
 export function SidebarFooter() {
   const [showTooltip, setShowTooltip] = useState(false);
+  const { language, setLanguage } = useLanguage();
 
   return (
     <div
+      style={{
+        paddingTop: "1.5rem",
+        borderTop: "1px solid #e2e8f0",
+        fontSize: "0.85rem",
+        color: "#3b82f6",
+        marginTop: "auto",
+      }}
+    >
+      <div
         style={{
-          paddingTop: "1.5rem",
-          borderTop: "1px solid #e2e8f0",
-          fontSize: "0.85rem",
-          color: "#3b82f6",
-          marginTop: "auto",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "0.75rem",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "0.75rem",
-          }}
-        >
+        <LanguageSelector
+          currentLanguage={language}
+          onLanguageChange={setLanguage}
+        />
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <div
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
@@ -45,14 +54,15 @@ export function SidebarFooter() {
                 style={{
                   position: "absolute",
                   bottom: "calc(100% + 12px)",
-                  left: 0,
+                  left: "50%",
+                  transform: "translateX(-50%)",
                   backgroundColor: "white",
                   color: "#374151",
                   padding: "1rem 1.25rem",
                   borderRadius: "12px",
                   fontSize: "0.75rem",
                   lineHeight: "1.5",
-                  width: "220px",
+                  minWidth: "180px",
                   boxShadow: "0 4px 20px rgba(0, 0, 0, 0.12)",
                   border: "1px solid #e5e7eb",
                   zIndex: 10,
@@ -68,7 +78,7 @@ export function SidebarFooter() {
                   }}
                 >
                   <span style={{ fontSize: "1.1rem" }}>🇩🇪</span>
-                  Made in Germany
+                  {t(language, "footer.madeIn")}
                 </div>
                 <div
                   style={{
@@ -79,7 +89,7 @@ export function SidebarFooter() {
                   }}
                 >
                   <span style={{ fontSize: "1.1rem" }}>🇪🇺</span>
-                  With European privacy
+                  {t(language, "footer.privacy")}
                 </div>
                 <div
                   style={{
@@ -89,13 +99,13 @@ export function SidebarFooter() {
                   }}
                 >
                   <span style={{ fontSize: "1.1rem" }}>🇺🇳</span>
-                  As a Digital Public Good
+                  {t(language, "footer.publicGood")}
                 </div>
                 <div
                   style={{
                     position: "absolute",
                     bottom: "-6px",
-                    left: "20px",
+                    left: "50%",
                     transform: "rotate(45deg)",
                     width: "12px",
                     height: "12px",
@@ -108,7 +118,6 @@ export function SidebarFooter() {
               </div>
             )}
           </div>
-
           <a
             href="https://github.com/davidpomerenke/securedact"
             target="_blank"
@@ -136,5 +145,6 @@ export function SidebarFooter() {
           </a>
         </div>
       </div>
+    </div>
   );
 }

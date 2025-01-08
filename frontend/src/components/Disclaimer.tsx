@@ -1,10 +1,14 @@
 import * as React from "react";
+import { useLanguage } from "../contexts/LanguageContext";
+import { t } from "../translations";
 
 interface DisclaimerProps {
   onClose: () => void;
 }
 
 export const Disclaimer: React.FC<DisclaimerProps> = ({ onClose }) => {
+  const { language } = useLanguage();
+  
   return (
     <div
       style={{
@@ -20,9 +24,7 @@ export const Disclaimer: React.FC<DisclaimerProps> = ({ onClose }) => {
       <span role="img" aria-label="warning">
         ⚠️
       </span>
-      <strong>DISCLAIMER</strong>: This software is currently in development
-      and not yet ready for production use. Use at your own risk and always
-      verify redactions manually.
+      <strong>{t(language, "disclaimer.title")}</strong>: {t(language, "disclaimer.message")}
       <button
         onClick={onClose}
         style={{
@@ -37,7 +39,7 @@ export const Disclaimer: React.FC<DisclaimerProps> = ({ onClose }) => {
           color: "#856404",
           padding: "5px",
         }}
-        aria-label="Close disclaimer"
+        aria-label={t(language, "disclaimer.close")}
       >
         ×
       </button>
