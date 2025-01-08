@@ -8,23 +8,23 @@ interface Props {
 }
 
 export function FileUpload({ onFileUpload, currentFileName }: Props) {
+  const [isHovered, setIsHovered] = React.useState(false);
+
   return (
     <div style={{ width: "100%" }}>
       <div
         style={{
           position: "relative",
           padding: "0.75rem",
-          backgroundColor: COLORS.neutral.white,
+          backgroundColor: isHovered ? COLORS.primary.light : COLORS.neutral.white,
           borderRadius: "8px",
-          border: `2px dashed ${COLORS.primary.light}`,
+          border: `2px dashed ${isHovered ? COLORS.primary.main : COLORS.primary.light}`,
           cursor: "pointer",
           transition: "all 0.2s ease",
-          "&:hover": {
-            borderColor: COLORS.primary.main,
-            backgroundColor: COLORS.primary.light,
-          },
           marginBottom: "1rem",
         }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         <input
           id="pdf-upload"

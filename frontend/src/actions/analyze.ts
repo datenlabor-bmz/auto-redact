@@ -3,7 +3,7 @@ import type { IHighlight } from "react-pdf-highlighter";
 export const analyzePdf = async (
   currentPdfFile: File,
   customPrompt: string,
-  setHighlights: (highlights: IHighlight[]) => void,
+  setHighlights: React.Dispatch<React.SetStateAction<IHighlight[]>>,
   setIsAnalyzing: (isAnalyzing: boolean) => void
 ) => {
   if (!currentPdfFile) return;
@@ -33,7 +33,6 @@ export const analyzePdf = async (
       .pipeThrough(
         new TransformStream({
           transform(chunk, controller) {
-            // Split chunk into lines and handle each SSE message
             const lines = chunk.split("\n");
             for (const line of lines) {
               if (line.startsWith("data: ")) {
@@ -55,7 +54,7 @@ export const analyzePdf = async (
 
             if (data.status === "started") return;
 
-            const highlight = {
+            const highlight: IHighlight = {
               content: { text: data.text },
               position: {
                 boundingRect: {
@@ -82,7 +81,7 @@ export const analyzePdf = async (
               id: String(Math.random()).slice(2),
             };
 
-            setHighlights((prev) => [...prev, highlight]);
+            setHighlights(prev => [...prev, highlight]);
           },
         })
       );
