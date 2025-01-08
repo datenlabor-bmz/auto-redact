@@ -1,15 +1,19 @@
-# ⛓️‍💥 AutoRedact
+[![stability-wip](https://img.shields.io/badge/stability-wip-lightgrey.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#work-in-progress)
+
+> ⚠️ **DISCLAIMER**: This software is currently in development and not yet ready for production use. Use at your own risk and always verify redactions manually.
+
+# ⬛️ AutoRedact
 
 A tool for redacting sensitive information from PDF documents using AI assistance.
-
-> ⚠️ **Development Notice**: This software is currently in early development and not yet ready for production use. Features may be incomplete or unstable. Use at your own risk.
 
 ## Features
 
 - Upload and view PDF documents
-- AI-powered detection of sensitive information
 - Manual redaction by highlighting text
+- AI-powered detection of sensitive information
 - Export redacted PDFs
+
+For a local-first version for the privacy-paranoid, see the [SecuRedact](https://github.com/davidpomerenke/securedact) fork.
 
 ## Setup
 
@@ -43,6 +47,6 @@ uv run uvicorn main:app --reload
 
 ## License
 
-MIT License (c) BMZ / David Pomerenke
+MIT License (c) BMZ Data Lab / David Pomerenke
 
 The frontend is based on an example from [react-pdf-highlighter](https://github.com/agentcooper/react-pdf-highlighter/), MIT License.
