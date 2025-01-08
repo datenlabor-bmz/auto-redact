@@ -1,4 +1,4 @@
-import type * as React from "react";
+import * as React from "react";
 import type { IHighlight } from "react-pdf-highlighter";
 import { analyzePdf } from "./actions/analyze";
 import { downloadPdf } from "./actions/download";
