@@ -8,6 +8,7 @@ body {
 }
 
 .sidebar {
+  overflow: auto;
   color: rgb(119, 119, 119);
   background: linear-gradient(
     rgb(245, 245, 245),
