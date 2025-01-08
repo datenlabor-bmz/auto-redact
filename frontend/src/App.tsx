@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import * as React from "react";
 
 import {
   AreaHighlight,
@@ -34,7 +35,7 @@ export function App() {
   const [uploadedPdfUrl, setUploadedPdfUrl] = useState<string | null>(null);
   const [currentPdfFile, setCurrentPdfFile] = useState<File | null>(null);
   const [customPrompt, setCustomPrompt] = useState<string>(
-    `Redact all personal information, confidential data, and sensitive business information.`
+    "Redact all personal information, confidential data, and sensitive business information."
   );
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
@@ -76,7 +77,7 @@ export function App() {
     };
   }, [scrollToHighlightFromHash]);
 
-  const getHighlightById = (id: string) => {
+  const _getHighlightById = (id: string) => {
     return highlights.find((highlight) => highlight.id === id);
   };
 
@@ -242,8 +243,8 @@ export function App() {
                   onSelectionFinished={(
                     position,
                     content,
-                    hideTipAndSelection,
-                    transformSelection
+                    _hideTipAndSelection,
+                    _transformSelection
                   ) => {
                     addHighlight({
                       content,
@@ -254,9 +255,9 @@ export function App() {
                   }}
                   highlightTransform={(
                     highlight,
-                    index,
-                    setTip,
-                    hideTip,
+                    _index,
+                    _setTip,
+                    _hideTip,
                     viewportToScaled,
                     screenshot,
                     isScrolledTo
@@ -293,7 +294,7 @@ export function App() {
             }}
           </PdfLoader>
         ) : (
-          <div></div>
+          <div />
         )}
       </div>
     </div>

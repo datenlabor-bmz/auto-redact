@@ -1,4 +1,4 @@
-import { IHighlight } from "react-pdf-highlighter";
+import type { IHighlight } from "react-pdf-highlighter";
 
 // const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
 export const uploadPdf = async (
@@ -51,7 +51,7 @@ export const uploadPdf = async (
                     height: h.page_height,
                   },
                 ],
-                pageNumber: parseInt(pageNum),
+                pageNumber: Number.parseInt(pageNum),
               },
               comment: { text: "AI Generated", emoji: "🤖" },
               id: String(Math.random()).slice(2),

@@ -1,12 +1,12 @@
+import type * as React from "react";
 import type { IHighlight } from "react-pdf-highlighter";
-import React, { useEffect } from "react";
-import { FileUpload } from "./components/FileUpload";
-import { RedactionHints } from "./components/RedactionHints";
-import { SidebarFooter } from "./components/SidebarFooter";
-import { PromptInput } from "./components/PromptInput";
+import { analyzePdf } from "./actions/analyze";
 import { downloadPdf } from "./actions/download";
 import { uploadPdf } from "./actions/upload";
-import { analyzePdf } from "./actions/analyze";
+import { FileUpload } from "./components/FileUpload";
+import { PromptInput } from "./components/PromptInput";
+import { RedactionHints } from "./components/RedactionHints";
+import { SidebarFooter } from "./components/SidebarFooter";
 
 interface Props {
   highlights: Array<IHighlight>;

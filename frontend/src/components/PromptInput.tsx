@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 
 interface PromptInputProps {
   customPrompt: string;
@@ -9,7 +9,7 @@ interface PromptInputProps {
 
 const adjustTextareaHeight = (element: HTMLTextAreaElement) => {
   element.style.height = "auto";
-  element.style.height = element.scrollHeight + "px";
+  element.style.height = `${element.scrollHeight}px`;
 };
 
 export function PromptInput({
@@ -98,7 +98,7 @@ export function PromptInput({
       >
         {isAnalyzing ? (
           <>
-            <div className="spinner-small"></div>
+            <div className="spinner-small" />
             Analyzing PDF...
           </>
         ) : (

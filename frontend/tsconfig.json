@@ -1,18 +1,12 @@
 {
-    "compilerOptions": {
-        "target": "ESNext",
-        "module": "ESNext",
-        "lib": [
-            "ESNext",
-            "DOM"
-        ],
-        "noEmit": true,
-        "jsx": "react",
-        "moduleResolution": "node",
-        "allowSyntheticDefaultImports": true
-    },
-    "include": [
-        "./src",
-        "../decs.d.ts"
-    ]
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "noEmit": true,
+    "jsx": "react",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["./src", "../decs.d.ts"]
 }

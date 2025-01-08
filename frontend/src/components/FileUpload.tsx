@@ -1,5 +1,5 @@
+import type * as React from "react";
 import { COLORS } from "../style/theme";
-import React from "react";
 
 interface Props {
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
