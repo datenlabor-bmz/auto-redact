@@ -35,11 +35,11 @@ export function PromptInput({
           display: "block",
           marginBottom: "0.5rem",
           color: "#1e293b",
-          fontSize: "0.9rem",
+          fontSize: "0.8rem",
           fontWeight: "600",
         }}
       >
-        AI Redaction Prompt:
+        Instructions for the AI:
       </label>
       <textarea
         ref={textareaRef}
@@ -63,7 +63,7 @@ export function PromptInput({
           minHeight: "70px",
           marginBottom: "0.5rem",
           padding: "0.75rem",
-          fontSize: "0.85rem",
+          fontSize: "0.75rem",
           fontFamily: "Monaco, Consolas, 'Courier New', monospace",
           lineHeight: "1.4",
           border: "1px solid #e2e8f0",

@@ -14,7 +14,7 @@ export function RedactionHints() {
       }}
     >
       <div style={{ marginBottom: "0.75rem", fontWeight: "600" }}>
-        💡 How to create redactions:
+        💡 Making manual redactions:
       </div>
       <ul
         style={{
@@ -23,9 +23,17 @@ export function RedactionHints() {
           lineHeight: "1.4",
         }}
       >
-        <li>Select text with your mouse to redact specific content</li>
-        <li>Hold Alt and drag to redact rectangular areas</li>
-        <li>All highlights will be converted to redactions when saving</li>
+        <li>Select text with your mouse</li>
+        <li>Hold the <kbd style={{
+          backgroundColor: "#f1f5f9",
+          border: "1px solid #e2e8f0",
+          borderRadius: "4px",
+          boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+          padding: "2px 6px",
+          fontFamily: "inherit",
+          fontSize: "0.8em",
+          color: "#475569"
+        }}>Alt</kbd> key to draw larger redaction boxes</li>
       </ul>
     </div>
   );

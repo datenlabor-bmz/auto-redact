@@ -16,6 +16,7 @@ import type {
 
 import { Sidebar } from "./Sidebar";
 import { Spinner } from "./components/Spinner";
+import { Disclaimer } from "./components/Disclaimer";
 
 import "./style/App.css";
 import "../node_modules/react-pdf-highlighter/dist/style.css";
@@ -38,6 +39,7 @@ export function App() {
     "Redact all personal information, confidential data, and sensitive business information."
   );
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showDisclaimer, setShowDisclaimer] = useState(true);
 
   const resetHighlights = () => {
     setHighlights([]);
@@ -179,123 +181,109 @@ export function App() {
   );
 
   return (
-    <div className="App" style={{ display: "flex", height: "100vh" }}>
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: "#fff3cd",
-          color: "#856404",
-          padding: "12px",
-          textAlign: "center",
-          zIndex: 1000,
-          borderBottom: "1px solid #ffeeba",
-          fontSize: "14px",
+    <div className="App">
+      {showDisclaimer && <Disclaimer onClose={() => setShowDisclaimer(false)} />}
+      <div 
+        style={{ 
+          display: "flex", 
+          height: showDisclaimer ? "calc(100vh - 40px)" : "100vh",
         }}
       >
-        <span role="img" aria-label="warning">
-          ⚠️
-        </span>
-        <strong>DISCLAIMER</strong>: This software is currently in development
-        and not yet ready for production use. Use at your own risk and always
-        verify redactions manually.
-      </div>
-      <Sidebar
-        highlights={highlights}
-        resetHighlights={resetHighlights}
-        toggleDocument={toggleDocument}
-        onFileUpload={handleFileUpload}
-        onDeleteHighlight={deleteHighlight}
-        onBackendHighlights={handleBackendHighlights}
-        currentPdfFile={currentPdfFile}
-        customPrompt={customPrompt}
-        setCustomPrompt={setCustomPrompt}
-        isAnalyzing={isAnalyzing}
-        setIsAnalyzing={setIsAnalyzing}
-        setHighlights={setHighlights}
-      />
-      <div
-        className="pdf-viewer"
-        style={{
-          height: "100vh",
-          width: "75vw",
-          position: "relative",
-        }}
-      >
-        {url ? (
-          <PdfLoader url={url} beforeLoad={<Spinner />}>
-            {(pdfDocument) => {
-              return (
-                <PdfHighlighter
-                  pdfDocument={pdfDocument}
-                  pdfScaleValue="page-width"
-                  enableAreaSelection={(event) => event.altKey}
-                  onScrollChange={resetHash}
-                  scrollRef={(scrollTo) => {
-                    scrollViewerTo.current = scrollTo;
-                    // Only call scroll if there's a hash present
-                    if (document.location.hash) {
-                      scrollToHighlightFromHash();
-                    }
-                  }}
-                  onSelectionFinished={(
-                    position,
-                    content,
-                    _hideTipAndSelection,
-                    _transformSelection
-                  ) => {
-                    addHighlight({
-                      content,
+        <Sidebar
+          highlights={highlights}
+          resetHighlights={resetHighlights}
+          toggleDocument={toggleDocument}
+          onFileUpload={handleFileUpload}
+          onDeleteHighlight={deleteHighlight}
+          onBackendHighlights={handleBackendHighlights}
+          currentPdfFile={currentPdfFile}
+          customPrompt={customPrompt}
+          setCustomPrompt={setCustomPrompt}
+          isAnalyzing={isAnalyzing}
+          setIsAnalyzing={setIsAnalyzing}
+          setHighlights={setHighlights}
+        />
+        <div
+          className="pdf-viewer"
+          style={{
+            height: "100%",
+            width: "75vw",
+            position: "relative",
+          }}
+        >
+          {url ? (
+            <PdfLoader url={url} beforeLoad={<Spinner />}>
+              {(pdfDocument) => {
+                return (
+                  <PdfHighlighter
+                    pdfDocument={pdfDocument}
+                    pdfScaleValue="page-width"
+                    enableAreaSelection={(event) => event.altKey}
+                    onScrollChange={resetHash}
+                    scrollRef={(scrollTo) => {
+                      scrollViewerTo.current = scrollTo;
+                      // Only call scroll if there's a hash present
+                      if (document.location.hash) {
+                        scrollToHighlightFromHash();
+                      }
+                    }}
+                    onSelectionFinished={(
                       position,
-                      comment: { text: "", emoji: "" },
-                    });
-                    return null;
-                  }}
-                  highlightTransform={(
-                    highlight,
-                    _index,
-                    _setTip,
-                    _hideTip,
-                    viewportToScaled,
-                    screenshot,
-                    isScrolledTo
-                  ) => {
-                    const isTextHighlight = !highlight.content?.image;
+                      content,
+                      _hideTipAndSelection,
+                      _transformSelection
+                    ) => {
+                      addHighlight({
+                        content,
+                        position,
+                        comment: { text: "", emoji: "" },
+                      });
+                      return null;
+                    }}
+                    highlightTransform={(
+                      highlight,
+                      _index,
+                      _setTip,
+                      _hideTip,
+                      viewportToScaled,
+                      screenshot,
+                      isScrolledTo
+                    ) => {
+                      const isTextHighlight = !highlight.content?.image;
 
-                    return isTextHighlight ? (
-                      <div onClick={() => deleteHighlight(highlight.id)}>
-                        <Highlight
-                          isScrolledTo={isScrolledTo}
-                          position={highlight.position}
-                          comment={highlight.comment}
-                        />
-                      </div>
-                    ) : (
-                      <div onClick={() => deleteHighlight(highlight.id)}>
-                        <AreaHighlight
-                          isScrolledTo={isScrolledTo}
-                          highlight={highlight}
-                          onChange={(boundingRect) => {
-                            updateHighlight(
-                              highlight.id,
-                              { boundingRect: viewportToScaled(boundingRect) },
-                              { image: screenshot(boundingRect) }
-                            );
-                          }}
-                        />
-                      </div>
-                    );
-                  }}
-                  highlights={highlights}
-                />
-              );
-            }}
-          </PdfLoader>
-        ) : (
-          <div />
-        )}
+                      return isTextHighlight ? (
+                        <div onClick={() => deleteHighlight(highlight.id)}>
+                          <Highlight
+                            isScrolledTo={isScrolledTo}
+                            position={highlight.position}
+                            comment={highlight.comment}
+                          />
+                        </div>
+                      ) : (
+                        <div onClick={() => deleteHighlight(highlight.id)}>
+                          <AreaHighlight
+                            isScrolledTo={isScrolledTo}
+                            highlight={highlight}
+                            onChange={(boundingRect) => {
+                              updateHighlight(
+                                highlight.id,
+                                { boundingRect: viewportToScaled(boundingRect) },
+                                { image: screenshot(boundingRect) }
+                              );
+                            }}
+                          />
+                        </div>
+                      );
+                    }}
+                    highlights={highlights}
+                  />
+                );
+              }}
+            </PdfLoader>
+          ) : (
+            <div />
+          )}
+        </div>
       </div>
     </div>
   );

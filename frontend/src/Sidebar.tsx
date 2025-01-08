@@ -116,7 +116,6 @@ export function Sidebar({
               }
               isAnalyzing={isAnalyzing}
             />
-
             <RedactionHints />
           </>
         )}
