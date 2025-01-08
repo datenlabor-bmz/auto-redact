@@ -1,8 +1,12 @@
 import type { IHighlight } from "react-pdf-highlighter";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { FileUpload } from "./components/FileUpload";
 import { RedactionHints } from "./components/RedactionHints";
 import { SidebarFooter } from "./components/SidebarFooter";
+import { PromptInput } from "./components/PromptInput";
+import { downloadPdf } from "./actions/download";
+import { uploadPdf } from "./actions/upload";
+import { analyzePdf } from "./actions/analyze";
 
 interface Props {
   highlights: Array<IHighlight>;
@@ -14,17 +18,13 @@ interface Props {
   currentPdfFile: File | null;
   customPrompt: string;
   setCustomPrompt: (prompt: string) => void;
-  onAnalyzePdf: () => void;
   isAnalyzing: boolean;
+  setIsAnalyzing: (isAnalyzing: boolean) => void;
+  setHighlights: (highlights: Array<IHighlight>) => void;
 }
 
 const updateHash = (highlight: IHighlight) => {
   document.location.hash = `highlight-${highlight.id}`;
-};
-
-const adjustTextareaHeight = (element: HTMLTextAreaElement) => {
-  element.style.height = "auto";
-  element.style.height = element.scrollHeight + "px";
 };
 
 export function Sidebar({
@@ -36,69 +36,11 @@ export function Sidebar({
   currentPdfFile,
   customPrompt,
   setCustomPrompt,
-  onAnalyzePdf,
   isAnalyzing,
+  setIsAnalyzing,
+  setHighlights,
 }: Props) {
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const fileUrl = URL.createObjectURL(file);
-      onFileUpload(fileUrl, file);
-
-      try {
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const response = await fetch("/api/analyze-pdf", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to analyze PDF");
-        }
-
-        const analysisResult = await response.json();
-        const convertedHighlights = Object.entries(analysisResult).flatMap(
-          ([pageNum, highlights]: [string, any[]]) =>
-            highlights.map((h: any) => {
-              return {
-                content: {
-                  text: h.text || "",
-                },
-                position: {
-                  boundingRect: {
-                    x1: h.x0,
-                    y1: h.y0,
-                    x2: h.x1,
-                    y2: h.y1,
-                    width: h.page_width,
-                    height: h.page_height,
-                  },
-                  rects: [
-                    {
-                      x1: h.x0,
-                      y1: h.y0,
-                      x2: h.x1,
-                      y2: h.y1,
-                      width: h.page_width,
-                      height: h.page_height,
-                    },
-                  ],
-                  pageNumber: parseInt(pageNum),
-                },
-                comment: { text: "AI Generated", emoji: "🤖" },
-                id: String(Math.random()).slice(2),
-              };
-            })
-        );
-
-        onBackendHighlights(convertedHighlights);
-      } catch (error) {
-        console.error("Error analyzing PDF:", error);
-      }
-    }
-  };
+  
 
   const sortedHighlights = [...highlights].sort((a, b) => {
     // First sort by page number
@@ -109,59 +51,6 @@ export function Sidebar({
     // If on same page, sort by vertical position (top to bottom)
     return a.position.boundingRect.y1 - b.position.boundingRect.y1;
   });
-
-  const handleSave = async () => {
-    if (!currentPdfFile) {
-      alert("No PDF file loaded");
-      return;
-    }
-
-    try {
-      const formData = new FormData();
-      formData.append("file", currentPdfFile);
-
-      // Transform highlights back to PyMuPDF coordinate system
-      const transformedHighlights = highlights.map((h) => {
-        return {
-          ...h,
-          position: {
-            ...h.position,
-            boundingRect: {
-              ...h.position.boundingRect,
-              // Convert back to PyMuPDF coordinates
-              y1: h.position.boundingRect.y1,
-              y2: h.position.boundingRect.y2,
-            },
-          },
-        };
-      });
-
-      formData.append("annotations", JSON.stringify(transformedHighlights));
-
-      const response = await fetch("/api/save-annotations", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to save annotations");
-      }
-
-      // Download the annotated PDF
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `annotated_${currentPdfFile.name}`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error("Error saving annotations:", error);
-      alert("Failed to save annotations");
-    }
-  };
 
   return (
         <div
@@ -202,7 +91,7 @@ export function Sidebar({
       {/* Main Content */}
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <FileUpload
-          onFileUpload={handleFileUpload}
+          onFileUpload={async (event: React.ChangeEvent<HTMLInputElement>) => uploadPdf(event, onFileUpload, onBackendHighlights)}
           currentFileName={currentPdfFile?.name}
         />
 
@@ -211,7 +100,7 @@ export function Sidebar({
           <PromptInput
             customPrompt={customPrompt}
             setCustomPrompt={setCustomPrompt}
-            onAnalyzePdf={onAnalyzePdf}
+            onAnalyzePdf={async () => analyzePdf(currentPdfFile, customPrompt, setHighlights, setIsAnalyzing)}
             isAnalyzing={isAnalyzing}
           />
 
@@ -248,7 +137,7 @@ export function Sidebar({
 
             {currentPdfFile && (
           <button
-            onClick={handleSave}
+            onClick={async () => downloadPdf(currentPdfFile, highlights)}
             style={{
               width: "100%",
                   padding: "0.75rem",
