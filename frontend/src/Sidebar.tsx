@@ -1,6 +1,7 @@
 import type { IHighlight } from "react-pdf-highlighter";
 import React, { useState } from "react";
 import { FileUpload } from "./components/FileUpload";
+import { PromptInput } from "./components/PromptInput";
 
 interface Props {
   highlights: Array<IHighlight>;
@@ -18,11 +19,6 @@ interface Props {
 
 const updateHash = (highlight: IHighlight) => {
   document.location.hash = `highlight-${highlight.id}`;
-};
-
-const adjustTextareaHeight = (element: HTMLTextAreaElement) => {
-  element.style.height = "auto";
-  element.style.height = element.scrollHeight + "px";
 };
 
 export function Sidebar({
@@ -208,106 +204,35 @@ export function Sidebar({
 
         {currentPdfFile && (
           <>
-          <div style={{ marginBottom: "1rem" }}>
-            <label
-              htmlFor="prompt-input"
-              style={{
-                display: "block",
-                marginBottom: "0.5rem",
-                  color: "#1e293b",
-                fontSize: "0.9rem",
-                  fontWeight: "600",
-              }}
-            >
-              AI Redaction Prompt:
-            </label>
-            <textarea
-              id="prompt-input"
-              value={customPrompt}
-              onChange={(e) => {
-                setCustomPrompt(e.target.value);
-                adjustTextareaHeight(e.target);
-              }}
-              onFocus={(e) => adjustTextareaHeight(e.target)}
-              onKeyDown={(e) => {
-                if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-                  e.preventDefault();
-                  if (!isAnalyzing) {
-                    onAnalyzePdf();
-                  }
-                }
-              }}
-              style={{
-                width: "100%",
-                minHeight: "70px",
-                marginBottom: "0.5rem",
-                  padding: "0.75rem",
-                  fontSize: "0.85rem",
-                fontFamily: "Monaco, Consolas, 'Courier New', monospace",
-                lineHeight: "1.4",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: "6px",
-                resize: "none",
-                boxSizing: "border-box",
-                overflow: "hidden",
-                  backgroundColor: "#fff",
-                  color: "#1e293b",
-              }}
-            />
-            <button
-              onClick={onAnalyzePdf}
-              disabled={isAnalyzing}
-              style={{
-                width: "100%",
-                  padding: "0.75rem",
-                fontSize: "0.9rem",
-                  fontWeight: "500",
-                  color: "#fff",
-                  backgroundColor: "#3b82f6",
-                  border: "none",
-                  borderRadius: "6px",
-                cursor: isAnalyzing ? "not-allowed" : "pointer",
-                opacity: isAnalyzing ? 0.7 : 1,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "8px",
-                  transition: "all 0.2s ease",
-              }}
-            >
-              {isAnalyzing ? (
-                <>
-                  <div className="spinner-small"></div>
-                  Analyzing PDF...
-                </>
-              ) : (
-                "Get AI Redactions"
-              )}
-            </button>
-            </div>
+          <PromptInput
+            customPrompt={customPrompt}
+            setCustomPrompt={setCustomPrompt}
+            onAnalyzePdf={onAnalyzePdf}
+            isAnalyzing={isAnalyzing}
+          />
 
-            <div style={{
-              padding: "1.25rem",
-              backgroundColor: "#fff",
-              borderRadius: "8px",
-              fontSize: "0.85rem",
-              color: "#1e293b",
-              border: "1px solid #e2e8f0",
-              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-            }}>
-              <div style={{ marginBottom: "0.75rem", fontWeight: "600" }}>
-                💡 How to create redactions:
-              </div>
-              <ul style={{
-                margin: "0",
-                paddingLeft: "1.2rem",
-                lineHeight: "1.4",
-              }}>
-                <li>Select text with your mouse to redact specific content</li>
-                <li>Hold Alt and drag to redact rectangular areas</li>
-                <li>All highlights will be converted to redactions when saving</li>
-              </ul>
+          <div style={{
+            padding: "1.25rem",
+            backgroundColor: "#fff",
+            borderRadius: "8px",
+            fontSize: "0.85rem",
+            color: "#1e293b",
+            border: "1px solid #e2e8f0",
+            boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+          }}>
+            <div style={{ marginBottom: "0.75rem", fontWeight: "600" }}>
+              💡 How to create redactions:
             </div>
+            <ul style={{
+              margin: "0",
+              paddingLeft: "1.2rem",
+              lineHeight: "1.4",
+            }}>
+              <li>Select text with your mouse to redact specific content</li>
+              <li>Hold Alt and drag to redact rectangular areas</li>
+              <li>All highlights will be converted to redactions when saving</li>
+            </ul>
+          </div>
           </>
         )}
 
