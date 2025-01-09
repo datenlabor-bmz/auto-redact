@@ -2,10 +2,10 @@ import * as React from "react";
 import { analyzePdf } from "./actions/analyze";
 import { uploadPdf } from "./actions/upload";
 import { FileUpload } from "./components/FileUpload";
-import { IFGRuleSelector } from "./components/IFGRuleSelector";
 import { PromptInput } from "./components/PromptInput";
 import { RedactionHints } from "./components/RedactionHints";
 import { SidebarFooter } from "./components/SidebarFooter";
+import { SidebarHighlightsList } from "./components/SidebarHighlightsList";
 import { useLanguage } from "./contexts/LanguageContext";
 import { t } from "./translations";
 import type { IFGRule, SecuredactHighlight } from "./types/highlights";
@@ -48,12 +48,6 @@ export function Sidebar({
   setHighlights,
 }: Props) {
   const { language } = useLanguage();
-  const sortedHighlights = [...highlights].sort((a, b) => {
-    if (a.position.pageNumber !== b.position.pageNumber) {
-      return a.position.pageNumber - b.position.pageNumber;
-    }
-    return a.position.boundingRect.y1 - b.position.boundingRect.y1;
-  });
 
   const updateHighlightRule = (
     highlight: SecuredactHighlight,
@@ -138,174 +132,14 @@ export function Sidebar({
           </>
         )}
 
-        {highlights.length > 0 && (
-          <>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "0.5rem",
-              }}
-            >
-              <div style={{ fontWeight: 600, color: "#1e293b" }}>
-                {t(language, "redactions.title")}
-              </div>
-              <button
-                onClick={resetHighlights}
-                style={{
-                  background: "none",
-                  border: "none",
-                  padding: "0.4rem 0.6rem",
-                  fontSize: "0.75rem",
-                  color: "#64748b",
-                  cursor: "pointer",
-                  borderRadius: "4px",
-                }}
-              >
-                {t(language, "redactions.resetAll")}
-              </button>
-            </div>
-
-            <ul
-              className="sidebar__highlights"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.5rem",
-                margin: 0,
-                padding: 0,
-              }}
-            >
-              {sortedHighlights.map((highlight, index) => {
-                const showPageNumber =
-                  index === 0 ||
-                  highlight.position.pageNumber !==
-                    sortedHighlights[index - 1].position.pageNumber;
-
-                return (
-                  <React.Fragment key={highlight.id}>
-                    {showPageNumber && (
-                      <div
-                        style={{
-                          fontSize: "0.7rem",
-                          color: "#94a3b8",
-                          padding: "0.1rem 0",
-                          marginTop: index === 0 ? "0" : "0.25rem",
-                        }}
-                      >
-                        Page {highlight.position.pageNumber}
-                      </div>
-                    )}
-                    <li
-                      className="sidebar__highlight"
-                      style={{
-                        padding: "0.75rem",
-                        backgroundColor: "#f0f9ff",
-                        borderRadius: "6px",
-                        border: "1px solid #bfdbfe",
-                        position: "relative",
-                      }}
-                    >
-                      <div
-                        style={{ cursor: "pointer" }}
-                        onClick={() => updateHash(highlight)}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "8px",
-                          }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                            }}
-                          >
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onDeleteHighlight?.(highlight.id);
-                              }}
-                              style={{
-                                position: "absolute",
-                                top: "0.5rem",
-                                right: "0.5rem",
-                                background: "none",
-                                border: "none",
-                                cursor: "pointer",
-                                fontSize: "1.1rem",
-                                padding: "0.35rem 0.5rem",
-                                color: "#94a3b8",
-                                lineHeight: 1,
-                                borderRadius: "4px",
-                                transition: "background-color 0.2s ease",
-                                zIndex: 1,
-                                marginBottom: "1rem",
-                              }}
-                              title="Remove redaction"
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor =
-                                  "rgba(0, 0, 0, 0.05)";
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor =
-                                  "transparent";
-                              }}
-                            >
-                              ×
-                            </button>
-                            {highlight.content.text && (
-                              <blockquote
-                                style={{
-                                  flex: 1,
-                                  margin: 0,
-                                  fontSize: "0.85rem",
-                                  lineHeight: "1.4",
-                                  color: "#334155",
-                                }}
-                              >
-                                {highlight.content.text.length > 60
-                                  ? `${highlight.content.text.slice(0, 60).trim()}…`
-                                  : highlight.content.text.trim()}
-                              </blockquote>
-                            )}
-                            {highlight.content.image ? (
-                              <div
-                                className="highlight__image"
-                                style={{ marginTop: "2rem" }}
-                              >
-                                <img
-                                  src={highlight.content.image}
-                                  alt={"Screenshot"}
-                                  style={{
-                                    maxWidth: "calc(100% - 2px)",
-                                    height: "auto",
-                                    display: "block",
-                                    border: "1px dashed",
-                                  }}
-                                />
-                              </div>
-                            ) : null}
-                          </div>
-                        </div>
-                        <IFGRuleSelector
-                          rules={ifgRules}
-                          selectedRule={highlight.ifgRule}
-                          onSelectRule={(rule) =>
-                            updateHighlightRule(highlight, rule)
-                          }
-                        />
-                      </div>
-                    </li>
-                  </React.Fragment>
-                );
-              })}
-            </ul>
-          </>
-        )}
+        <SidebarHighlightsList
+          highlights={highlights}
+          resetHighlights={resetHighlights}
+          onDeleteHighlight={onDeleteHighlight}
+          updateHighlightRule={updateHighlightRule}
+          updateHash={updateHash}
+          rules={ifgRules}
+        />
       </div>
 
       <SidebarFooter />
