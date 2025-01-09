@@ -6,7 +6,8 @@ export const translations = {
     },
     disclaimer: {
       title: "DISCLAIMER",
-      message: "This software is currently in development and not yet ready for production use.",
+      message:
+        "This software is currently in development and not yet ready for production use.",
       close: "Close disclaimer",
     },
     fileUpload: {
@@ -30,7 +31,8 @@ export const translations = {
     },
     promptInput: {
       label: "Instructions for the AI:",
-      defaultPrompt: "Redact all personal information, confidential data, and sensitive business information.",
+      defaultPrompt:
+        "Redact all personal information, confidential data, and sensitive business information.",
       button: {
         analyze: "Get AI Redactions",
         analyzing: "Analyzing PDF...",
@@ -53,7 +55,8 @@ export const translations = {
     },
     disclaimer: {
       title: "HINWEIS",
-      message: "Diese Software ist noch in Entwicklung und nicht für den Produktiveinsatz geeignet.",
+      message:
+        "Diese Software ist noch in Entwicklung und nicht für den Produktiveinsatz geeignet.",
       close: "Hinweis schließen",
     },
     fileUpload: {
@@ -77,7 +80,8 @@ export const translations = {
     },
     promptInput: {
       label: "Anweisungen für die KI:",
-      defaultPrompt: "Schwärzen Sie alle persönlichen Informationen, vertraulichen Daten und sensiblen Geschäftsinformationen.",
+      defaultPrompt:
+        "Schwärzen Sie alle persönlichen Informationen, vertraulichen Daten und sensiblen Geschäftsinformationen.",
       button: {
         analyze: "KI-Schwärzungen abrufen",
         analyzing: "PDF wird analysiert...",
@@ -99,16 +103,16 @@ export type Language = keyof typeof translations;
 export type TranslationKeys = keyof typeof translations.en;
 
 export function t(lang: Language, key: string): string {
-  const keys = key.split('.');
+  const keys = key.split(".");
   let value: any = translations[lang];
-  
+
   for (const k of keys) {
-    if (value && typeof value === 'object' && k in value) {
+    if (value && typeof value === "object" && k in value) {
       value = value[k];
     } else {
       return key;
     }
   }
-  
-  return typeof value === 'string' ? value : key;
-} 
+
+  return typeof value === "string" ? value : key;
+}

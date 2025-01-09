@@ -81,7 +81,7 @@ export const analyzePdf = async (
               id: String(Math.random()).slice(2),
             };
 
-            setHighlights(prev => [...prev, highlight]);
+            setHighlights((prev) => [...prev, highlight]);
           },
         })
       );

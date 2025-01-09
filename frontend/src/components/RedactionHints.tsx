@@ -1,11 +1,11 @@
 import * as React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
-import { translations, t } from "../translations";
+import { t, translations } from "../translations";
 
 export function RedactionHints() {
   const { language } = useLanguage();
   const hints = translations[language].redactionHints.hints;
-  
+
   return (
     <div
       style={{

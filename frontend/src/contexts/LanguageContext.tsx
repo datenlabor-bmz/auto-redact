@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { Language } from '../translations';
+import * as React from "react";
+import type { Language } from "../translations";
 
 interface LanguageContextType {
   language: Language;
@@ -7,20 +7,20 @@ interface LanguageContextType {
 }
 
 export const LanguageContext = React.createContext<LanguageContextType>({
-  language: 'en',
+  language: "en",
   setLanguage: () => {},
 });
 
-const LANGUAGE_COOKIE_NAME = 'preferred_language';
+const LANGUAGE_COOKIE_NAME = "preferred_language";
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   // Initialize language from cookie or default to 'en'
   const [language, setLanguageState] = React.useState<Language>(() => {
     const storedLang = document.cookie
-      .split('; ')
-      .find(row => row.startsWith(LANGUAGE_COOKIE_NAME))
-      ?.split('=')[1];
-    return (storedLang === 'en' || storedLang === 'de') ? storedLang : 'en';
+      .split("; ")
+      .find((row) => row.startsWith(LANGUAGE_COOKIE_NAME))
+      ?.split("=")[1];
+    return storedLang === "en" || storedLang === "de" ? storedLang : "en";
   });
 
   const setLanguage = React.useCallback((lang: Language) => {
@@ -31,10 +31,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setLanguageState(lang);
   }, []);
 
-  const value = React.useMemo(() => ({
-    language,
-    setLanguage,
-  }), [language, setLanguage]);
+  const value = React.useMemo(
+    () => ({
+      language,
+      setLanguage,
+    }),
+    [language, setLanguage]
+  );
 
   return (
     <LanguageContext.Provider value={value}>
@@ -46,7 +49,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 export function useLanguage() {
   const context = React.useContext(LanguageContext);
   if (!context) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+    throw new Error("useLanguage must be used within a LanguageProvider");
   }
   return context;
-} 
+}

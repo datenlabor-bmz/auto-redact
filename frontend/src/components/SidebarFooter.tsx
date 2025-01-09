@@ -1,8 +1,8 @@
 import { useState } from "react";
 import * as React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
-import { LanguageSelector } from "./LanguageSelector";
 import { t } from "../translations";
+import { LanguageSelector } from "./LanguageSelector";
 
 export function SidebarFooter() {
   const [showTooltip, setShowTooltip] = useState(false);

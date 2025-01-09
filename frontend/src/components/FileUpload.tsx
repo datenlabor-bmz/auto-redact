@@ -1,9 +1,8 @@
 import * as React from "react";
-import { COLORS } from "../style/theme";
+import { downloadPdf } from "../actions/download";
 import { useLanguage } from "../contexts/LanguageContext";
 import { t } from "../translations";
-import { downloadPdf } from "../actions/download";
-import { SecuredactHighlight } from "../types/highlights";
+import type { SecuredactHighlight } from "../types/highlights";
 
 interface Props {
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -13,23 +12,28 @@ interface Props {
   highlights: Array<SecuredactHighlight>;
 }
 
-export function FileUpload({ onFileUpload, currentFileName, currentPdfFile, highlights }: Props) {
+export function FileUpload({
+  onFileUpload,
+  currentFileName,
+  currentPdfFile,
+  highlights,
+}: Props) {
   const { language } = useLanguage();
   const [showOptions, setShowOptions] = React.useState(false);
-  
+
   // Close dropdown when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      if (!target.closest('.download-dropdown')) {
+      if (!target.closest(".download-dropdown")) {
         setShowOptions(false);
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
-  
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <label
@@ -109,7 +113,7 @@ export function FileUpload({ onFileUpload, currentFileName, currentPdfFile, high
 
       {currentPdfFile && highlights.length > 0 && (
         <div className="download-dropdown">
-          <button 
+          <button
             className="download-trigger"
             onClick={(e) => {
               e.stopPropagation();
@@ -119,7 +123,7 @@ export function FileUpload({ onFileUpload, currentFileName, currentPdfFile, high
             <span>Save document...</span>
             <span style={{ fontSize: "0.8rem" }}>▾</span>
           </button>
-          <div className={`download-options ${showOptions ? 'show' : ''}`}>
+          <div className={`download-options ${showOptions ? "show" : ""}`}>
             <button
               className="download-option"
               onClick={() => {

@@ -14,11 +14,10 @@ import type {
 } from "react-pdf-highlighter";
 
 import { Sidebar } from "./Sidebar";
-import { Spinner } from "./components/Spinner";
 import { Disclaimer } from "./components/Disclaimer";
+import { Spinner } from "./components/Spinner";
 import { LanguageProvider } from "./contexts/LanguageContext";
-import { LanguageSelector } from "./components/LanguageSelector";
-import { SecuredactHighlight } from "./types/highlights";
+import type { SecuredactHighlight } from "./types/highlights";
 
 import "./style/App.css";
 import "../node_modules/react-pdf-highlighter/dist/style.css";
@@ -55,7 +54,9 @@ function AppContent() {
     }
   };
 
-  const scrollViewerTo = useRef<(highlight: SecuredactHighlight) => void>(() => {});
+  const scrollViewerTo = useRef<(highlight: SecuredactHighlight) => void>(
+    () => {}
+  );
 
   const scrollToHighlightFromHash = useCallback(() => {
     const highlightId = parseIdFromHash();
@@ -184,10 +185,12 @@ function AppContent() {
 
   return (
     <div className="App">
-      {showDisclaimer && <Disclaimer onClose={() => setShowDisclaimer(false)} />}
-      <div 
-        style={{ 
-          display: "flex", 
+      {showDisclaimer && (
+        <Disclaimer onClose={() => setShowDisclaimer(false)} />
+      )}
+      <div
+        style={{
+          display: "flex",
           height: showDisclaimer ? "calc(100vh - 40px)" : "100vh",
         }}
       >

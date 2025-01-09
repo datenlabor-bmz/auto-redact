@@ -3,7 +3,7 @@ import type { IHighlight } from "react-pdf-highlighter";
 export const downloadPdf = async (
   currentPdfFile: File,
   highlights: IHighlight[],
-  isDraft: boolean = false
+  isDraft = false
 ) => {
   if (!currentPdfFile) {
     alert("No PDF file loaded");
@@ -47,7 +47,9 @@ export const downloadPdf = async (
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = isDraft ? `draft_${currentPdfFile.name}` : `redacted_${currentPdfFile.name}`;
+    a.download = isDraft
+      ? `draft_${currentPdfFile.name}`
+      : `redacted_${currentPdfFile.name}`;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);

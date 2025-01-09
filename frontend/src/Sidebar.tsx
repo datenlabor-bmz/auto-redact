@@ -1,16 +1,14 @@
 import * as React from "react";
-import type { IHighlight } from "react-pdf-highlighter";
 import { analyzePdf } from "./actions/analyze";
-import { downloadPdf } from "./actions/download";
 import { uploadPdf } from "./actions/upload";
 import { FileUpload } from "./components/FileUpload";
+import { IFGRuleSelector } from "./components/IFGRuleSelector";
 import { PromptInput } from "./components/PromptInput";
 import { RedactionHints } from "./components/RedactionHints";
 import { SidebarFooter } from "./components/SidebarFooter";
 import { useLanguage } from "./contexts/LanguageContext";
 import { t } from "./translations";
-import { IFGRuleSelector } from "./components/IFGRuleSelector";
-import { SecuredactHighlight, IFGRule } from "./types/highlights";
+import type { IFGRule, SecuredactHighlight } from "./types/highlights";
 
 interface Props {
   highlights: Array<SecuredactHighlight>;
@@ -57,7 +55,10 @@ export function Sidebar({
     return a.position.boundingRect.y1 - b.position.boundingRect.y1;
   });
 
-  const updateHighlightRule = (highlight: SecuredactHighlight, rule: IFGRule | undefined) => {
+  const updateHighlightRule = (
+    highlight: SecuredactHighlight,
+    rule: IFGRule | undefined
+  ) => {
     setHighlights(
       highlights.map((h) =>
         h.id === highlight.id ? { ...h, ifgRule: rule } : h
@@ -238,7 +239,9 @@ export function Sidebar({
                       <IFGRuleSelector
                         rules={ifgRules}
                         selectedRule={highlight.ifgRule}
-                        onSelectRule={(rule) => updateHighlightRule(highlight, rule)}
+                        onSelectRule={(rule) =>
+                          updateHighlightRule(highlight, rule)
+                        }
                       />
                     </div>
                     <button

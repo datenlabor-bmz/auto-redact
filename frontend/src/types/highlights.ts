@@ -1,4 +1,4 @@
-import { IHighlight } from "react-pdf-highlighter";
+import type { IHighlight } from "react-pdf-highlighter";
 
 export interface IFGRule {
   reference: string;
@@ -10,4 +10,4 @@ export interface IFGRule {
 
 export interface SecuredactHighlight extends IHighlight {
   ifgRule?: IFGRule;
-} 
+}

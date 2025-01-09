@@ -8,7 +8,7 @@ interface DisclaimerProps {
 
 export const Disclaimer: React.FC<DisclaimerProps> = ({ onClose }) => {
   const { language } = useLanguage();
-  
+
   return (
     <div
       style={{
@@ -24,7 +24,8 @@ export const Disclaimer: React.FC<DisclaimerProps> = ({ onClose }) => {
       <span role="img" aria-label="warning">
         ⚠️
       </span>
-      <strong>{t(language, "disclaimer.title")}</strong>: {t(language, "disclaimer.message")}
+      <strong>{t(language, "disclaimer.title")}</strong>:{" "}
+      {t(language, "disclaimer.message")}
       <button
         onClick={onClose}
         style={{
@@ -45,4 +46,4 @@ export const Disclaimer: React.FC<DisclaimerProps> = ({ onClose }) => {
       </button>
     </div>
   );
-}; 
+};
