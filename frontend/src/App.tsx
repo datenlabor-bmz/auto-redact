@@ -87,18 +87,8 @@ function AppContent() {
   };
 
   const addHighlight = (highlight: NewHighlight) => {
-    // PDF standard dimensions (A4)
-    const PDF_WIDTH = 595.32;
-    const PDF_HEIGHT = 841.92;
-
-    // Get current viewport dimensions
     const { width: viewportWidth, height: viewportHeight } =
       highlight.position.boundingRect;
-
-    // Calculate scale factors
-    const scaleX = PDF_WIDTH / viewportWidth;
-    const scaleY = PDF_HEIGHT / viewportHeight;
-
     // Convert coordinates
     const enrichedHighlight: SecuredactHighlight = {
       ...highlight,
@@ -106,21 +96,21 @@ function AppContent() {
         ...highlight.position,
         boundingRect: {
           ...highlight.position.boundingRect,
-          x1: highlight.position.boundingRect.x1 * scaleX,
-          y1: highlight.position.boundingRect.y1 * scaleY,
-          x2: highlight.position.boundingRect.x2 * scaleX,
-          y2: highlight.position.boundingRect.y2 * scaleY,
-          width: PDF_WIDTH,
-          height: PDF_HEIGHT,
+          x1: highlight.position.boundingRect.x1,
+          y1: highlight.position.boundingRect.y1,
+          x2: highlight.position.boundingRect.x2,
+          y2: highlight.position.boundingRect.y2,
+          width: 1,
+          height: 1,
         },
         rects: highlight.position.rects.map((rect) => ({
           ...rect,
-          x1: rect.x1 * scaleX,
-          y1: rect.y1 * scaleY,
-          x2: rect.x2 * scaleX,
-          y2: rect.y2 * scaleY,
-          width: PDF_WIDTH,
-          height: PDF_HEIGHT,
+          x1: rect.x1,
+          y1: rect.y1,
+          x2: rect.x2,
+          y2: rect.y2,
+          width: viewportWidth,
+          height: viewportHeight,
         })),
       },
       id: getNextId(),
@@ -188,10 +178,12 @@ function AppContent() {
       {showDisclaimer && (
         <Disclaimer onClose={() => setShowDisclaimer(false)} />
       )}
-      <div className={`
+      <div
+        className={`
         flex flex-1 overflow-hidden
-        ${showDisclaimer ? 'h-[calc(100%-40px)]' : 'h-full'}
-      `}>
+        ${showDisclaimer ? "h-[calc(100%-40px)]" : "h-full"}
+      `}
+      >
         <Sidebar
           highlights={highlights}
           resetHighlights={resetHighlights}
