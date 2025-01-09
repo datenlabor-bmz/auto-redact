@@ -10,17 +10,17 @@ export function SidebarFooter() {
 
   return (
     <div className="text-sm text-primary-text">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-2">
         <LanguageSelector
           currentLanguage={language}
           onLanguageChange={setLanguage}
         />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <div
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
             className={`
-              flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-help relative
+              flex items-center gap-1 px-2 py-1 rounded-lg cursor-help relative
               ${showTooltip ? 'bg-gray-100' : 'bg-transparent'}
               transition-all duration-200
             `}
@@ -53,7 +53,7 @@ export function SidebarFooter() {
             href="https://github.com/davidpomerenke/securedact"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center px-2.5 py-1.5 rounded-lg transition-all duration-200 text-gray-600 hover:bg-gray-100"
+            className="flex items-center px-2 py-1 rounded-lg transition-all duration-200 text-gray-600 hover:bg-gray-100"
           >
             <svg
               height="20"

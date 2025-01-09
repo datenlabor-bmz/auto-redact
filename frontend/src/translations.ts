@@ -83,7 +83,7 @@ export const translations = {
       defaultPrompt:
         "Schwärzen Sie alle persönlichen Informationen, vertraulichen Daten und sensiblen Geschäftsinformationen.",
       button: {
-        analyze: "KI-Schwärzungen abrufen",
+        analyze: "Schwärzen mit KI",
         analyzing: "PDF wird analysiert...",
       },
     },
