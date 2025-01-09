@@ -37,7 +37,6 @@ body {
 .highlight__image {
   overflow: auto;
   max-width: 300px;
-  border: 1px dashed;
 }
 
 .sidebar__highlight {
