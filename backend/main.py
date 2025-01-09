@@ -208,32 +208,59 @@ def analyze_pdf(file: UploadFile, prompt: str = Form(...)):
 def save_annotations(
     file: UploadFile = File(...),
     annotations: str = Form(...),
+    is_draft: str = Form("false"),
 ):
     if not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="File must be a PDF")
 
     # Parse the annotations JSON string
     highlights = json.loads(annotations)
+    is_draft_mode = json.loads(is_draft)
 
     # Read the PDF file
     contents = file.file.read()
     pdf_stream = io.BytesIO(contents)
     doc = pymupdf.open(stream=pdf_stream, filetype="pdf")
 
-    # Process each highlight as a redaction
+    # Process each highlight
     for highlight in highlights:
         page = doc[highlight["position"]["pageNumber"] - 1]  # 0-based index
         rect = highlight["position"]["boundingRect"]
+        coords = [rect["x1"], rect["y1"], rect["x2"], rect["y2"]]
+        ifgRule = highlight.get("ifgRule", {})
+        info_text = f"{ifgRule['reference']}\n\n{ifgRule['reason']}\n\n{ifgRule['full_text']}\n\n{ifgRule['url']}" if ifgRule else ""
+        pink = (1, 0.41, 0.71)
+        yellow = (1, 1, 0)
 
-        # Create redaction annotation
-        page.add_redact_annot(
-            quad=[rect["x1"], rect["y1"], rect["x2"], rect["y2"]], fill=(1, 0.41, 0.71)
-        )
+        if is_draft_mode:
+            # Create a highlight annotation with popup info
+            # We could also add a redaction annotation here, but they are not well supported in PDF viewers, e.g.
+            # - in MacOS Preview, their styling does not work
+            # - in MacOS Adobe Acrobat Reader, it's hard to read the text content
+            # Therefore we add normal annotations and convert them later; the title "Redaction Information" is quite convenient for making clear that this is something equivalent to a proper redaction annotation
+            annot = page.add_highlight_annot(coords)
+            annot.set_colors(stroke=yellow) 
+            annot.set_opacity(0.3)
+            if info_text:
+                annot.set_popup(coords)
+                annot.set_info(content=info_text, title="Redaction Information")
+            annot.update()
+        else:
+            # Create and apply redaction annotation
+            page.add_redact_annot(
+                quad=coords,
+                fill=pink,
+            )
+            if info_text:
+                annot = page.add_highlight_annot(coords)
+                annot.set_colors(stroke=(0,0,0), fill=(0,0,0))
+                annot.set_opacity(0)
+                annot.set_popup(coords)
+                annot.set_info(content=info_text, title="Redaction Information")
+                annot.update()
+            page.apply_redactions()
 
-        # Apply the redaction
-        page.apply_redactions()
-
-    # Save the redacted PDF
+    # Save the modified PDF
     output = io.BytesIO()
     doc.save(output)
     doc.close()
@@ -247,7 +274,7 @@ def save_annotations(
         content=output.getvalue(),
         media_type="application/pdf",
         headers={
-            "Content-Disposition": f"attachment; filename=redacted_{safe_filename}"
+            "Content-Disposition": f"attachment; filename={'draft_' if is_draft_mode else 'redacted_'}{safe_filename}"
         },
     )
 

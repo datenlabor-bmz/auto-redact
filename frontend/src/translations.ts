@@ -13,6 +13,8 @@ export const translations = {
       title: "Upload PDF Document",
       subtitle: "or drop file here",
       changeDocument: "Click to change document",
+      downloadDraft: "Download draft",
+      downloadRedacted: "Download redacted document",
     },
     redactionHints: {
       title: "💡 Quick Tips:",
@@ -58,6 +60,8 @@ export const translations = {
       title: "PDF-Dokument hochladen",
       subtitle: "oder Datei hier ablegen",
       changeDocument: "Dokumentenupload",
+      downloadDraft: "Entwurf herunterladen",
+      downloadRedacted: "Geschwärztes Dokument herunterladen",
     },
     redactionHints: {
       title: "💡 Tipps:",

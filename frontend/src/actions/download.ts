@@ -2,7 +2,8 @@ import type { IHighlight } from "react-pdf-highlighter";
 
 export const downloadPdf = async (
   currentPdfFile: File,
-  highlights: IHighlight[]
+  highlights: IHighlight[],
+  isDraft: boolean = false
 ) => {
   if (!currentPdfFile) {
     alert("No PDF file loaded");
@@ -30,6 +31,7 @@ export const downloadPdf = async (
     });
 
     formData.append("annotations", JSON.stringify(transformedHighlights));
+    formData.append("is_draft", JSON.stringify(isDraft));
 
     const response = await fetch("/api/save-annotations", {
       method: "POST",
@@ -45,7 +47,7 @@ export const downloadPdf = async (
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `annotated_${currentPdfFile.name}`;
+    a.download = isDraft ? `draft_${currentPdfFile.name}` : `redacted_${currentPdfFile.name}`;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);

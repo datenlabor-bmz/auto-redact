@@ -114,6 +114,8 @@ export function Sidebar({
             uploadPdf(event, onFileUpload, onBackendHighlights)
           }
           currentFileName={currentPdfFile?.name}
+          currentPdfFile={currentPdfFile}
+          highlights={highlights}
         />
 
         {currentPdfFile && (
@@ -163,26 +165,6 @@ export function Sidebar({
                 {t(language, "redactions.resetAll")}
               </button>
             </div>
-
-            {currentPdfFile && (
-              <button
-                onClick={async () => downloadPdf(currentPdfFile, highlights)}
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  fontSize: "0.9rem",
-                  fontWeight: "500",
-                  color: "#1e293b",
-                  backgroundColor: "#f1f5f9",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                Save Redacted PDF
-              </button>
-            )}
 
             <ul
               className="sidebar__highlights"
