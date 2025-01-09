@@ -77,7 +77,7 @@ export function Sidebar({
       <div className="p-8 space-y-6">
         <FileUpload
           onFileUpload={async (event: React.ChangeEvent<HTMLInputElement>) =>
-            await uploadPdf(event, onFileUpload, resetHighlights)
+            await uploadPdf(event, onFileUpload)
           }
           currentFileName={currentPdfFile?.name}
           currentPdfFile={currentPdfFile}
