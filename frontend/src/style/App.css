@@ -210,3 +210,20 @@ blockquote {
   align-items: center;
   justify-content: center;
 }
+
+.file-upload-label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.file-upload-label:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}

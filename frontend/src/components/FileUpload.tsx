@@ -36,19 +36,7 @@ export function FileUpload({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <label
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem",
-          padding: "1rem",
-          backgroundColor: "#fff",
-          border: "1px solid #e2e8f0",
-          borderRadius: "8px",
-          cursor: "pointer",
-          transition: "all 0.2s ease",
-        }}
-      >
+      <label className="file-upload-label">
         <input
           type="file"
           accept=".pdf"
@@ -111,7 +99,7 @@ export function FileUpload({
         </div>
       </label>
 
-      {currentPdfFile && highlights.length > 0 && (
+      {currentPdfFile && (
         <div className="download-dropdown">
           <button
             className="download-trigger"
