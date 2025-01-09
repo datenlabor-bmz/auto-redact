@@ -9,25 +9,31 @@ import { RedactionHints } from "./components/RedactionHints";
 import { SidebarFooter } from "./components/SidebarFooter";
 import { useLanguage } from "./contexts/LanguageContext";
 import { t } from "./translations";
+import { IFGRuleSelector } from "./components/IFGRuleSelector";
+import { SecuredactHighlight, IFGRule } from "./types/highlights";
 
 interface Props {
-  highlights: Array<IHighlight>;
+  highlights: Array<SecuredactHighlight>;
   resetHighlights: () => void;
   toggleDocument: () => void;
   onFileUpload: (fileUrl: string, file: File) => void;
   onDeleteHighlight?: (id: string) => void;
-  onBackendHighlights: (highlights: Array<IHighlight>) => void;
+  onBackendHighlights: (highlights: Array<SecuredactHighlight>) => void;
   currentPdfFile: File | null;
   customPrompt: string;
   setCustomPrompt: (prompt: string) => void;
   isAnalyzing: boolean;
   setIsAnalyzing: (isAnalyzing: boolean) => void;
-  setHighlights: (highlights: Array<IHighlight>) => void;
+  setHighlights: (highlights: Array<SecuredactHighlight>) => void;
 }
 
-const updateHash = (highlight: IHighlight) => {
+const updateHash = (highlight: SecuredactHighlight) => {
   document.location.hash = `highlight-${highlight.id}`;
 };
+
+// Load IFG rules from the JSON file
+import ifgRulesData from "../../backend/rules/informationsfreiheitsgesetz.json";
+const ifgRules: IFGRule[] = ifgRulesData.rules;
 
 export function Sidebar({
   highlights,
@@ -50,6 +56,14 @@ export function Sidebar({
     }
     return a.position.boundingRect.y1 - b.position.boundingRect.y1;
   });
+
+  const updateHighlightRule = (highlight: SecuredactHighlight, rule: IFGRule | undefined) => {
+    setHighlights(
+      highlights.map((h) =>
+        h.id === highlight.id ? { ...h, ifgRule: rule } : h
+      )
+    );
+  };
 
   return (
     <div
@@ -239,6 +253,11 @@ export function Sidebar({
                           Page {highlight.position.pageNumber}
                         </div>
                       </div>
+                      <IFGRuleSelector
+                        rules={ifgRules}
+                        selectedRule={highlight.ifgRule}
+                        onSelectRule={(rule) => updateHighlightRule(highlight, rule)}
+                      />
                     </div>
                     <button
                       onClick={() => onDeleteHighlight?.(highlight.id)}

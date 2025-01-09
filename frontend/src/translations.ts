@@ -39,6 +39,10 @@ export const translations = {
       privacy: "With European privacy",
       publicGood: "As a Digital Public Good",
     },
+    ifgSelector: {
+      placeholder: "Select IFG reason...",
+      viewLaw: "View law →",
+    },
   },
   de: {
     app: {
@@ -53,7 +57,7 @@ export const translations = {
     fileUpload: {
       title: "PDF-Dokument hochladen",
       subtitle: "oder Datei hier ablegen",
-      changeDocument: "Klicken um Dokument zu ändern",
+      changeDocument: "Dokumentenupload",
     },
     redactionHints: {
       title: "💡 Tipps:",
@@ -79,6 +83,10 @@ export const translations = {
       madeIn: "Made in Germany",
       privacy: "Mit europäischem Datenschutz",
       publicGood: "Als digitales Gemeingut",
+    },
+    ifgSelector: {
+      placeholder: "IFG-Grund auswählen...",
+      viewLaw: "Gesetz ansehen →",
     },
   },
 } as const;

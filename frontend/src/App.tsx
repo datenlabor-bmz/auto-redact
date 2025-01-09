@@ -9,7 +9,6 @@ import {
 } from "react-pdf-highlighter";
 import type {
   Content,
-  IHighlight,
   NewHighlight,
   ScaledPosition,
 } from "react-pdf-highlighter";
@@ -19,6 +18,7 @@ import { Spinner } from "./components/Spinner";
 import { Disclaimer } from "./components/Disclaimer";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { LanguageSelector } from "./components/LanguageSelector";
+import { SecuredactHighlight } from "./types/highlights";
 
 import "./style/App.css";
 import "../node_modules/react-pdf-highlighter/dist/style.css";
@@ -34,7 +34,7 @@ const resetHash = () => {
 
 function AppContent() {
   const [url, setUrl] = useState<string | null>(null);
-  const [highlights, setHighlights] = useState<Array<IHighlight>>([]);
+  const [highlights, setHighlights] = useState<Array<SecuredactHighlight>>([]);
   const [uploadedPdfUrl, setUploadedPdfUrl] = useState<string | null>(null);
   const [currentPdfFile, setCurrentPdfFile] = useState<File | null>(null);
   const [customPrompt, setCustomPrompt] = useState<string>(
@@ -55,7 +55,7 @@ function AppContent() {
     }
   };
 
-  const scrollViewerTo = useRef<(highlight: IHighlight) => void>(() => {});
+  const scrollViewerTo = useRef<(highlight: SecuredactHighlight) => void>(() => {});
 
   const scrollToHighlightFromHash = useCallback(() => {
     const highlightId = parseIdFromHash();
@@ -99,7 +99,7 @@ function AppContent() {
     const scaleY = PDF_HEIGHT / viewportHeight;
 
     // Convert coordinates
-    const enrichedHighlight = {
+    const enrichedHighlight: SecuredactHighlight = {
       ...highlight,
       position: {
         ...highlight.position,
@@ -176,7 +176,7 @@ function AppContent() {
   }, []);
 
   const handleBackendHighlights = useCallback(
-    (newHighlights: Array<IHighlight>) => {
+    (newHighlights: Array<SecuredactHighlight>) => {
       setHighlights((prevHighlights) => [...prevHighlights, ...newHighlights]);
     },
     []
