@@ -184,16 +184,14 @@ function AppContent() {
   );
 
   return (
-    <div className="App">
+    <div className="flex flex-col h-full">
       {showDisclaimer && (
         <Disclaimer onClose={() => setShowDisclaimer(false)} />
       )}
-      <div
-        style={{
-          display: "flex",
-          height: showDisclaimer ? "calc(100vh - 40px)" : "100vh",
-        }}
-      >
+      <div className={`
+        flex flex-1 overflow-hidden
+        ${showDisclaimer ? 'h-[calc(100%-40px)]' : 'h-full'}
+      `}>
         <Sidebar
           highlights={highlights}
           resetHighlights={resetHighlights}
@@ -208,14 +206,7 @@ function AppContent() {
           setIsAnalyzing={setIsAnalyzing}
           setHighlights={setHighlights}
         />
-        <div
-          className="pdf-viewer"
-          style={{
-            height: "100%",
-            width: "75vw",
-            position: "relative",
-          }}
-        >
+        <div className="pdf-viewer">
           {url ? (
             <PdfLoader url={url} beforeLoad={<Spinner />}>
               {(pdfDocument) => (
@@ -283,7 +274,9 @@ function AppContent() {
               )}
             </PdfLoader>
           ) : (
-            <div />
+            <div className="flex items-center justify-center h-full text-neutral-text-tertiary">
+              No PDF document selected
+            </div>
           )}
         </div>
       </div>

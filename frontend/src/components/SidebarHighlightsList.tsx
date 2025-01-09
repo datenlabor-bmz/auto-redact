@@ -3,6 +3,7 @@ import { SidebarHighlight } from "./SidebarHighlight";
 import { useLanguage } from "../contexts/LanguageContext";
 import { t } from "../translations";
 import type { IFGRule, SecuredactHighlight } from "../types/highlights";
+import { Button } from "./ui/Button";
 
 interface Props {
   highlights: Array<SecuredactHighlight>;
@@ -38,43 +39,21 @@ export function SidebarHighlightsList({
 
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "0.5rem",
-        }}
-      >
-        <div style={{ fontWeight: 600, color: "#1e293b" }}>
+      <div className="flex justify-between items-center mb-2">
+        <div className="font-semibold text-neutral-text-primary">
           {t(language, "redactions.title")}
         </div>
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={resetHighlights}
-          style={{
-            background: "none",
-            border: "none",
-            padding: "0.4rem 0.6rem",
-            fontSize: "0.75rem",
-            color: "#64748b",
-            cursor: "pointer",
-            borderRadius: "4px",
-          }}
+          className="text-neutral-text-tertiary hover:text-neutral-text-secondary"
         >
           {t(language, "redactions.resetAll")}
-        </button>
+        </Button>
       </div>
 
-      <ul
-        className="sidebar__highlights"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "0.5rem",
-          margin: 0,
-          padding: 0,
-        }}
-      >
+      <ul className="flex flex-col gap-2 m-0 p-0">
         {sortedHighlights.map((highlight, index) => {
           const showPageNumber =
             index === 0 ||
@@ -84,14 +63,10 @@ export function SidebarHighlightsList({
           return (
             <React.Fragment key={highlight.id}>
               {showPageNumber && (
-                <div
-                  style={{
-                    fontSize: "0.7rem",
-                    color: "#94a3b8",
-                    padding: "0.1rem 0",
-                    marginTop: index === 0 ? "0" : "0.25rem",
-                  }}
-                >
+                <div className={`
+                  text-xs text-neutral-text-tertiary py-0.5
+                  ${index === 0 ? 'mt-0' : 'mt-1'}
+                `}>
                   Page {highlight.position.pageNumber}
                 </div>
               )}

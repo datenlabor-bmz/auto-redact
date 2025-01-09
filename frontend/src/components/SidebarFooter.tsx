@@ -9,112 +9,43 @@ export function SidebarFooter() {
   const { language, setLanguage } = useLanguage();
 
   return (
-    <div
-      style={{
-        paddingTop: "1.5rem",
-        borderTop: "1px solid #e2e8f0",
-        fontSize: "0.85rem",
-        color: "#3b82f6",
-        marginTop: "auto",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "0.75rem",
-        }}
-      >
+    <div className="text-sm text-primary-text">
+      <div className="flex items-center justify-between gap-3">
         <LanguageSelector
           currentLanguage={language}
           onLanguageChange={setLanguage}
         />
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <div className="flex items-center gap-2">
           <div
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              padding: "0.4rem 0.6rem",
-              borderRadius: "6px",
-              cursor: "help",
-              position: "relative",
-              backgroundColor: showTooltip ? "#f3f4f6" : "transparent",
-              transition: "all 0.2s ease",
-            }}
+            className={`
+              flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-help relative
+              ${showTooltip ? 'bg-gray-100' : 'bg-transparent'}
+              transition-all duration-200
+            `}
           >
-            <span style={{ fontSize: "1.2rem" }}>🇩🇪</span>
-            <span style={{ fontSize: "1.2rem" }}>🇪🇺</span>
-            <span style={{ fontSize: "1.2rem" }}>🇺🇳</span>
+            <span className="text-xl">🇩🇪</span>
+            <span className="text-xl">🇪🇺</span>
+            <span className="text-xl">🇺🇳</span>
             {showTooltip && (
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: "calc(100% + 12px)",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  backgroundColor: "white",
-                  color: "#374151",
-                  padding: "1rem 1.25rem",
-                  borderRadius: "12px",
-                  fontSize: "0.75rem",
-                  lineHeight: "1.5",
-                  width: "180px",
-                  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.12)",
-                  border: "1px solid #e5e7eb",
-                  zIndex: 10,
-                  animation: "tooltipFade 0.2s ease-out",
-                }}
-              >
-                <div
-                  style={{
-                    marginBottom: "0.75rem",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  <span style={{ fontSize: "1.1rem" }}>🇩🇪</span>
+              <div className="
+                absolute bottom-full left-1/2 -translate-x-1/2 mb-3
+                bg-white text-gray-700 p-4 rounded-xl text-xs leading-normal
+                w-[180px] shadow-lg border border-gray-200 z-10 animate-tooltipFade
+              ">
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="text-lg">🇩🇪</span>
                   {t(language, "footer.madeIn")}
                 </div>
-                <div
-                  style={{
-                    marginBottom: "0.75rem",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  <span style={{ fontSize: "1.1rem" }}>🇪🇺</span>
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="text-lg">🇪🇺</span>
                   {t(language, "footer.privacy")}
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  <span style={{ fontSize: "1.1rem" }}>🇺🇳</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">🇺🇳</span>
                   {t(language, "footer.publicGood")}
                 </div>
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: "-6px",
-                    left: "calc(50% - 8px)",
-                    transform: "rotate(45deg)",
-                    width: "12px",
-                    height: "12px",
-                    backgroundColor: "white",
-                    border: "1px solid #e5e7eb",
-                    borderTop: "none",
-                    borderLeft: "none",
-                  }}
-                />
               </div>
             )}
           </div>
@@ -122,17 +53,7 @@ export function SidebarFooter() {
             href="https://github.com/davidpomerenke/securedact"
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "0.4rem 0.6rem",
-              borderRadius: "6px",
-              transition: "all 0.2s ease",
-              fontSize: "1.2rem",
-              color: "#666",
-              textDecoration: "none",
-              backgroundColor: "transparent",
-            }}
+            className="flex items-center px-2.5 py-1.5 rounded-lg transition-all duration-200 text-gray-600 hover:bg-gray-100"
           >
             <svg
               height="20"

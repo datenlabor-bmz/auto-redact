@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
 import { t } from "../translations";
+import { Button } from "./ui/Button";
 
 interface PromptInputProps {
   customPrompt: string;
@@ -30,16 +31,10 @@ export function PromptInput({
   }, [customPrompt]);
 
   return (
-    <div style={{ marginBottom: "1rem" }}>
+    <div className="mb-4">
       <label
         htmlFor="prompt-input"
-        style={{
-          display: "block",
-          marginBottom: "0.5rem",
-          color: "#1e293b",
-          fontSize: "0.8rem",
-          fontWeight: "600",
-        }}
+        className="block mb-2 text-sm font-semibold text-neutral-text-primary"
       >
         {t(language, "promptInput.label")}
       </label>
@@ -60,53 +55,27 @@ export function PromptInput({
             }
           }
         }}
-        style={{
-          width: "100%",
-          minHeight: "70px",
-          marginBottom: "0.5rem",
-          padding: "0.75rem",
-          fontSize: "0.75rem",
-          fontFamily: "Monaco, Consolas, 'Courier New', monospace",
-          lineHeight: "1.4",
-          border: "1px solid #e2e8f0",
-          borderRadius: "6px",
-          resize: "none",
-          boxSizing: "border-box",
-          overflow: "hidden",
-          backgroundColor: "#fff",
-          color: "#1e293b",
-        }}
+        className="
+          w-full min-h-[70px] mb-2 p-3
+          text-xs font-mono leading-relaxed
+          border border-neutral-border rounded-lg
+          resize-none overflow-hidden
+          bg-white text-neutral-text-primary
+          focus:border-primary-main focus:ring-1 focus:ring-primary-main
+          transition-colors duration-200
+        "
       />
-      <button
+      <Button
         onClick={onAnalyzePdf}
         disabled={isAnalyzing}
-        style={{
-          width: "100%",
-          padding: "0.75rem",
-          fontSize: "0.9rem",
-          fontWeight: "500",
-          color: "#fff",
-          backgroundColor: "#3b82f6",
-          border: "none",
-          borderRadius: "6px",
-          cursor: isAnalyzing ? "not-allowed" : "pointer",
-          opacity: isAnalyzing ? 0.7 : 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "8px",
-          transition: "all 0.2s ease",
-        }}
+        variant="primary"
+        className="w-full"
+        isLoading={isAnalyzing}
       >
-        {isAnalyzing ? (
-          <>
-            <div className="spinner-small" />
-            {t(language, "promptInput.button.analyzing")}
-          </>
-        ) : (
-          t(language, "promptInput.button.analyze")
-        )}
-      </button>
+        {isAnalyzing
+          ? t(language, "promptInput.button.analyzing")
+          : t(language, "promptInput.button.analyze")}
+      </Button>
     </div>
   );
 }

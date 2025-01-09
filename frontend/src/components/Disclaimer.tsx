@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
 import { t } from "../translations";
+import { Button } from "./ui/Button";
 
 interface DisclaimerProps {
   onClose: () => void;
@@ -10,40 +11,30 @@ export const Disclaimer: React.FC<DisclaimerProps> = ({ onClose }) => {
   const { language } = useLanguage();
 
   return (
-    <div
-      style={{
-        backgroundColor: "#fff3cd",
-        color: "#856404",
-        padding: "12px",
-        textAlign: "center",
-        borderBottom: "1px solid #ffeeba",
-        fontSize: "14px",
-        position: "relative",
-      }}
-    >
-      <span role="img" aria-label="warning">
+    <div className="
+      bg-yellow-50 text-yellow-800 
+      px-4 py-3 text-center text-sm
+      border-b border-yellow-100
+      relative
+    ">
+      <span role="img" aria-label="warning" className="mr-2">
         ⚠️
       </span>
       <strong>{t(language, "disclaimer.title")}</strong>:{" "}
       {t(language, "disclaimer.message")}
-      <button
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={onClose}
-        style={{
-          position: "absolute",
-          right: "10px",
-          top: "50%",
-          transform: "translateY(-50%)",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          fontSize: "16px",
-          color: "#856404",
-          padding: "5px",
-        }}
+        className="
+          absolute right-2 top-1/2 -translate-y-1/2
+          text-yellow-800 hover:bg-yellow-100/50
+          !p-1.5
+        "
         aria-label={t(language, "disclaimer.close")}
       >
         ×
-      </button>
+      </Button>
     </div>
   );
 };

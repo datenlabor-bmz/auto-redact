@@ -2,6 +2,7 @@ import * as React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
 import { t } from "../translations";
 import type { IFGRule } from "../types/highlights";
+import { Select } from "./ui/Select";
 
 interface IFGRuleSelectorProps {
   rules: IFGRule[];
@@ -15,10 +16,9 @@ export function IFGRuleSelector({
   onSelectRule,
 }: IFGRuleSelectorProps) {
   const { language } = useLanguage();
-  const [isOpen, setIsOpen] = React.useState(false);
 
   // Group rules by paragraph
-  const groupedRules = React.useMemo(() => {
+  const groupedOptions = React.useMemo(() => {
     const groups: { [key: string]: IFGRule[] } = {};
     rules.forEach((rule) => {
       const paragraph = rule.reference.substring(0, 2); // Get §3, §4, §5, §6
@@ -27,51 +27,33 @@ export function IFGRuleSelector({
       }
       groups[paragraph].push(rule);
     });
-    return groups;
+
+    return Object.entries(groups).map(([paragraph, paragraphRules]) => ({
+      label: `§${paragraph[1]}`,
+      options: paragraphRules.map(rule => ({
+        value: rule.reference,
+        label: rule.title,
+        title: `${rule.reference}\n\n${rule.reason}\n\n${rule.full_text}`
+      }))
+    }));
   }, [rules]);
 
   return (
-    <div style={{ position: "relative", marginTop: "0.5rem" }}>
-      <select
+    <div className="mt-2">
+      <Select
         value={selectedRule?.reference || ""}
         onChange={(e) => {
           const rule = rules.find((r) => r.reference === e.target.value);
           onSelectRule(rule);
         }}
-        style={{
-          width: "100%",
-          padding: "0.4rem",
-          fontSize: "0.75rem",
-          color: "#1e293b",
-          backgroundColor: "#fff",
-          border: "1px solid #e2e8f0",
-          borderRadius: "4px",
-          cursor: "pointer",
-          outline: "none",
-        }}
-        title={
-          selectedRule
-            ? `${selectedRule.reference}\n${selectedRule.reason}\n${selectedRule.url}`
-            : undefined
-        }
-      >
-        <option value="">
-          {t(language, "ifgSelector.placeholder") || "Select IFG reason..."}
-        </option>
-        {Object.entries(groupedRules).map(([paragraph, paragraphRules]) => (
-          <optgroup key={paragraph} label={`§${paragraph[1]}`}>
-            {paragraphRules.map((rule) => (
-              <option
-                key={rule.reference}
-                value={rule.reference}
-                title={`${rule.reference}\n\n${rule.reason}\n\n${rule.full_text}`}
-              >
-                {rule.title}
-              </option>
-            ))}
-          </optgroup>
-        ))}
-      </select>
+        options={groupedOptions}
+        placeholder={t(language, "ifgSelector.placeholder") || "Select IFG reason..."}
+        size="sm"
+        className="w-full text-neutral-text-primary bg-white"
+        title={selectedRule
+          ? `${selectedRule.reference}\n${selectedRule.reason}\n${selectedRule.url}`
+          : undefined}
+      />
     </div>
   );
 }

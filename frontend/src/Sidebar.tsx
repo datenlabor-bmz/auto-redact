@@ -61,52 +61,23 @@ export function Sidebar({
   };
 
   return (
-    <div
-      className="sidebar"
-      style={{
-        width: "20%",
-        minWidth: "250px",
-        padding: "2rem",
-        display: "flex",
-        flexDirection: "column",
-        gap: "2rem",
-        backgroundColor: "#f8fafc",
-        borderRight: "1px solid #e2e8f0",
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{ borderBottom: "1px solid #e2e8f0", paddingBottom: "1.5rem" }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            fontSize: "1.5rem",
-            fontWeight: "700",
-            color: "#1e293b",
-            marginBottom: "0.5rem",
-          }}
-        >
-          <span>⬛️</span>
-          <span style={{ color: "#0f172a" }}>{t(language, "app.title")}</span>
+    <div className="w-[20%] min-w-[300px] h-full overflow-auto bg-neutral-background border-r border-neutral-border">
+      <div className="p-8 border-b border-neutral-border">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-2xl">⬛️</span>
+          <h1 className="text-2xl font-bold text-neutral-text-primary">
+            {t(language, "app.title")}
+          </h1>
         </div>
-        <div
-          style={{
-            fontSize: "0.9rem",
-            color: "#3b82f6",
-          }}
-        >
+        <p className="text-sm text-primary-text">
           {t(language, "app.subtitle")}
-        </div>
+        </p>
       </div>
 
-      {/* Main Content */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div className="p-8 space-y-6">
         <FileUpload
           onFileUpload={async (event: React.ChangeEvent<HTMLInputElement>) =>
-            uploadPdf(event, onFileUpload, onBackendHighlights)
+            await uploadPdf(event, onFileUpload, resetHighlights)
           }
           currentFileName={currentPdfFile?.name}
           currentPdfFile={currentPdfFile}
@@ -140,9 +111,11 @@ export function Sidebar({
           updateHash={updateHash}
           rules={ifgRules}
         />
-      </div>
 
-      <SidebarFooter />
+        <div className="pt-6 border-t border-neutral-border">
+          <SidebarFooter />
+        </div>
+      </div>
     </div>
   );
 }
