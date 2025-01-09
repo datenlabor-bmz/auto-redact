@@ -1,5 +1,6 @@
 # Build stage for frontend
 FROM --platform=linux/amd64 node:20-slim AS frontend-builder
+COPY rules/ /app/rules
 WORKDIR /app/frontend
 COPY frontend/package.json .
 COPY frontend/tsconfig.json .

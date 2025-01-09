@@ -32,7 +32,7 @@ const updateHash = (highlight: SecuredactHighlight) => {
 };
 
 // Load IFG rules from the JSON file
-import ifgRulesData from "../../backend/rules/informationsfreiheitsgesetz.json";
+import ifgRulesData from "../../rules/informationsfreiheitsgesetz.json";
 const ifgRules: IFGRule[] = ifgRulesData.rules;
 
 export function Sidebar({
