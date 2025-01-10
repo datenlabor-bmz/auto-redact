@@ -8,8 +8,7 @@
 		"build": "tsc -b && vite build",
 		"format": "biome format --write ./src",
 		"lint": "biome lint ./src",
-		"check": "biome check --apply ./src",
-		"preview": "vite preview"
+		"check": "biome check --apply ./src"
 	},
 	"author": "",
 	"license": "ISC",
