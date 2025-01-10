@@ -26,4 +26,4 @@ COPY --from=frontend-builder /app/frontend/dist /app/backend/static
 EXPOSE 8000
 
 # Start the application
-CMD ["uv", "run", "python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uv", "run", "python", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]

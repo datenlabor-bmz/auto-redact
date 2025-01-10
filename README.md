@@ -28,8 +28,8 @@ AZURE_OPENAI_API_VERSION=your_version
 2. Build and run with Docker:
 
 ```bash
-docker build -t autoredact .
-docker run -p 8000:8000 --env-file .env --rm autoredact
+docker build -t auto-redact .
+docker run -p 8000:8000 --env-file .env --rm auto-redact
 ```
 
 Or run locally:
@@ -42,7 +42,7 @@ npm start
 
 # Backend
 cd backend
-uv run python -muvicorn main:app --reload
+uv run python -muvicorn app:app --reload
 ```
 
 ## License
