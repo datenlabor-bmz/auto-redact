@@ -81,7 +81,7 @@ export function FileUpload({
               setShowOptions(!showOptions);
             }}
           >
-            <span>Save document...</span>
+            <span>{t(language, "fileUpload.saveDocument")}</span>
             <span className="text-xs opacity-60">▾</span>
           </button>
           

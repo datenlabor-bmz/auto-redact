@@ -1,3 +1,5 @@
+# See documentation of PyMuPdf: https://pymupdf.readthedocs.io/en/latest/page.html#Page.add_redact_annot
+
 import io
 import json
 import os
@@ -226,17 +228,18 @@ def save_annotations(
     for highlight in highlights:
         page = doc[highlight["position"]["pageNumber"] - 1]  # 0-based index
         rect = highlight["position"]["boundingRect"]
-        # Print page dimensions from API call
-        print(
-            f"API dimensions - Width: {rect.get('width', 'N/A')}, Height: {rect.get('height', 'N/A')}"
-        )
+        # We could also use the individual rects that make up for example a paragraph of multiple lines of different shapes, but according to https://pymupdf.readthedocs.io/en/latest/page.html#Page.add_redact_annot, "if a quad is specified, then the enveloping rectangle is taken" anyway.
 
-        # Print page dimensions from PyMuPDF
-        page_rect = page.rect
-        print(
-            f"PyMuPDF dimensions - Width: {page_rect.width}, Height: {page_rect.height}"
-        )
+        # # Print page dimensions from API call
+        # print(
+        #     f"API dimensions - Width: {rect.get('width', 'N/A')}, Height: {rect.get('height', 'N/A')}"
+        # )
 
+        # # Print page dimensions from PyMuPDF
+        # page_rect = page.rect
+        # print(
+        #     f"PyMuPDF dimensions - Width: {page_rect.width}, Height: {page_rect.height}"
+        # )
         A4_WIDTH = 595
         A4_HEIGHT = 842
         factor_x = A4_WIDTH / rect["width"]
@@ -249,37 +252,19 @@ def save_annotations(
             rect["x2"] * factor_x,
             rect["y2"] * factor_y,
         ]
-        ifgRule = highlight.get("ifgRule", {})
-        info_text = f"{ifgRule['reference']}\n\n{ifgRule['reason']}\n\n{ifgRule['full_text']}\n\n{ifgRule['url']}" if ifgRule else ""
         pink = (1, 0.41, 0.71)
-        yellow = (1, 1, 0)
-
-        if is_draft_mode:
-            # Create a highlight annotation with popup info
-            # We could also add a redaction annotation here, but they are not well supported in PDF viewers, e.g.
-            # - in MacOS Preview, their styling does not work
-            # - in MacOS Adobe Acrobat Reader, it's hard to read the text content
-            # Therefore we add normal annotations and convert them later; the title "Redaction Information" is quite convenient for making clear that this is something equivalent to a proper redaction annotation
-            annot = page.add_highlight_annot(coords)
-            annot.set_colors(stroke=yellow) 
-            annot.set_opacity(0.3)
-            if info_text:
-                annot.set_popup(coords)
-                annot.set_info(content=info_text, title="Redaction Information")
-            annot.update()
-        else:
-            # Create and apply redaction annotation
-            page.add_redact_annot(
-                quad=coords,
-                fill=pink,
-            )
-            if info_text:
-                annot = page.add_highlight_annot(coords)
-                annot.set_colors(stroke=(0,0,0), fill=(0,0,0))
-                annot.set_opacity(0)
-                annot.set_popup(coords)
-                annot.set_info(content=info_text, title="Redaction Information")
-                annot.update()
+        ifgRule = highlight.get("ifgRule", {})
+        short_text = f"{ifgRule.get('title', '')}, {ifgRule.get('reference', '')}"
+        long_text = f"{ifgRule.get('reference', '')}\n\n{ifgRule.get('title', '')}\n\n{ifgRule.get('full_text', '')}\n\n{ifgRule.get('url', '')}"
+        annot = page.add_redact_annot(
+            quad=coords,
+            text=short_text,
+            cross_out=False,
+            fill=pink,
+        )
+        annot.set_info(content=long_text)
+        # There's some arguments for using other kinds of annotations such as highlight_annot for drafts, because they are displayed better in some viewers such as Apple Preview; but for the sake of standardization, we stick with redact_annot.
+        if not is_draft_mode:
             page.apply_redactions()
 
     # Save the modified PDF
@@ -296,7 +281,7 @@ def save_annotations(
         content=output.getvalue(),
         media_type="application/pdf",
         headers={
-            "Content-Disposition": f"attachment; filename={'draft_' if is_draft_mode else 'redacted_'}{safe_filename}"
+            "Content-Disposition": f"attachment; filename={'redactiondraft_' if is_draft_mode else 'redacted_'}{safe_filename}"
         },
     )
 
