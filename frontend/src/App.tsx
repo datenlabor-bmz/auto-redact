@@ -100,8 +100,8 @@ function AppContent() {
           y1: highlight.position.boundingRect.y1,
           x2: highlight.position.boundingRect.x2,
           y2: highlight.position.boundingRect.y2,
-          width: 1,
-          height: 1,
+          width: viewportWidth,
+          height: viewportHeight,
         },
         rects: highlight.position.rects.map((rect) => ({
           ...rect,

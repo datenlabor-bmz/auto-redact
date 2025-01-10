@@ -226,7 +226,29 @@ def save_annotations(
     for highlight in highlights:
         page = doc[highlight["position"]["pageNumber"] - 1]  # 0-based index
         rect = highlight["position"]["boundingRect"]
-        coords = [rect["x1"], rect["y1"], rect["x2"], rect["y2"]]
+        # Print page dimensions from API call
+        print(
+            f"API dimensions - Width: {rect.get('width', 'N/A')}, Height: {rect.get('height', 'N/A')}"
+        )
+
+        # Print page dimensions from PyMuPDF
+        page_rect = page.rect
+        print(
+            f"PyMuPDF dimensions - Width: {page_rect.width}, Height: {page_rect.height}"
+        )
+
+        A4_WIDTH = 595
+        A4_HEIGHT = 842
+        factor_x = A4_WIDTH / rect["width"]
+        factor_y = A4_HEIGHT / rect["height"]
+        print(f"Factor x: {factor_x}, Factor y: {factor_y}")
+
+        coords = [
+            rect["x1"] * factor_x,
+            rect["y1"] * factor_y,
+            rect["x2"] * factor_x,
+            rect["y2"] * factor_y,
+        ]
         ifgRule = highlight.get("ifgRule", {})
         info_text = f"{ifgRule['reference']}\n\n{ifgRule['reason']}\n\n{ifgRule['full_text']}\n\n{ifgRule['url']}" if ifgRule else ""
         pink = (1, 0.41, 0.71)
