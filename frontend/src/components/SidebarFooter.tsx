@@ -50,7 +50,7 @@ export function SidebarFooter() {
             )}
           </div>
           <a
-            href="https://github.com/davidpomerenke/securedact"
+            href="https://github.com/datenlabor-bmz/auto-redact"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center px-2 py-1 rounded-lg transition-all duration-200 text-gray-600 hover:bg-gray-100"
