@@ -29,17 +29,7 @@ export const uploadPdf = async (
       // Create URL from the processed file
       const processedFileUrl = URL.createObjectURL(fileWithoutRedactionAnnotations);
       console.log(highlights);
-      // const transformedHighlights = highlights.map((h) => {
-      //   return {
-      //     comment: {text: "", emoji: ""},
-      //     content: "",
-      //     id: h.id,
-      //     position: h.position,
-      //     ifgRule: h.ifgRule,
-      //   };
-      // }); 
-      const transformedHighlights = [];
-      onFileUpload(processedFileUrl, fileWithoutRedactionAnnotations, transformedHighlights);
+      onFileUpload(processedFileUrl, fileWithoutRedactionAnnotations, highlights);
     } catch (error) {
       console.error("Error uploading file:", error);
       alert("Failed to upload file");

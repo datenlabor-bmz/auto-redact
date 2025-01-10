@@ -87,22 +87,34 @@ def upload_pdf(file: UploadFile = File(...)):
                         "position": {
                             "pageNumber": page.number,
                             "boundingRect": rect,
+                            "rects": [
+                                {
+                                    **rect,
+                                    "height": rect["y2"] - rect["y1"],
+                                    "width": rect["x2"] - rect["x1"],
+                                    "pageNumber": page.number,
+                                }
+                            ],
                         },
-                        "ifgRule": annot.info,
+                        "content": {"text": annot.info.get("subject", "")},
+                        "id": hash(annot)
+                        # "ifgRule": None, # annot.info.get("content", {}),
                     }
                     highlights.append(highlight)
                     page.delete_annot(annot)
 
     # Convert PDF to base64 for JSON response
     pdf_bytes = doc.tobytes(garbage=1)
-    pdf_base64 = base64.b64encode(pdf_bytes).decode('ascii')
+    pdf_base64 = base64.b64encode(pdf_bytes).decode("ascii")
 
     return Response(
-        content=json.dumps({
-            "pdf": pdf_base64,
-            "highlights": highlights,
-        }),
-        media_type="application/json"
+        content=json.dumps(
+            {
+                "pdf": pdf_base64,
+                "highlights": highlights,
+            }
+        ),
+        media_type="application/json",
     )
 
 
@@ -164,7 +176,7 @@ def download_pdf(
             cross_out=False,
             fill=pink,
         )
-        annot.set_info(content=long_text)
+        annot.set_info(content=long_text, subject=highlight["content"]["text"])
         # There's some arguments for using other kinds of annotations such as highlight_annot for drafts, because they are displayed better in some viewers such as Apple Preview; but for the sake of standardization, we stick with redact_annot.
 
     if mode == "final":
