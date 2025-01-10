@@ -50,18 +50,76 @@ def analyze_pdf(file: UploadFile, prompt: str = Form(...)):
     )
 
 
-@api_router.post("/save-annotations")
-def save_annotations(
+def safe_filename(filename: str) -> str:
+    safe_chars = set(" ()-_.,![]{}#@%+=")  # Common safe special characters
+    return "".join(
+        c if (c.isalnum() or c in safe_chars) else "_" for c in filename
+    ).strip()
+
+
+@api_router.post("/upload-pdf")
+def upload_pdf(file: UploadFile = File(...)):
+    """
+    Converts redaction annotations to highlights for the frontend.
+    """
+    if not file.filename.endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="File must be a PDF")
+
+    # Read the PDF file
+    contents = file.file.read()
+    pdf_stream = io.BytesIO(contents)
+    doc = pymupdf.open(stream=pdf_stream, filetype="pdf")
+
+    highlights = []
+    if doc.has_annots():
+        for page in doc:
+            for annot in page.annots():
+                print(annot.type)
+                if annot.type[0] == 12 or True:
+                    print(annot.rect)
+                    rect = {
+                        "x1": annot.rect[0],
+                        "y1": annot.rect[1],
+                        "x2": annot.rect[2],
+                        "y2": annot.rect[3],
+                    }
+                    highlight = {
+                        "position": {
+                            "pageNumber": page.number,
+                            "boundingRect": rect,
+                        },
+                        "ifgRule": annot.info,
+                    }
+                    highlights.append(highlight)
+                    page.delete_annot(annot)
+
+    # Convert PDF to base64 for JSON response
+    pdf_bytes = doc.tobytes(garbage=1)
+    pdf_base64 = base64.b64encode(pdf_bytes).decode('ascii')
+
+    return Response(
+        content=json.dumps({
+            "pdf": pdf_base64,
+            "highlights": highlights,
+        }),
+        media_type="application/json"
+    )
+
+
+@api_router.post("/download-pdf")
+def download_pdf(
     file: UploadFile = File(...),
     annotations: str = Form(...),
-    is_draft: str = Form("false"),
+    mode: Literal["draft", "final"] = Form("final"),
 ):
+    """
+    Converts highlights from the frontend to (draft/final) redaction annotations.
+    """
     if not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="File must be a PDF")
 
     # Parse the annotations JSON string
     highlights = json.loads(annotations)
-    is_draft_mode = json.loads(is_draft)
 
     # Read the PDF file
     contents = file.file.read()
@@ -108,25 +166,20 @@ def save_annotations(
         )
         annot.set_info(content=long_text)
         # There's some arguments for using other kinds of annotations such as highlight_annot for drafts, because they are displayed better in some viewers such as Apple Preview; but for the sake of standardization, we stick with redact_annot.
-        if not is_draft_mode:
-            page.apply_redactions()
 
-    # Save the modified PDF
-    output = io.BytesIO()
-    doc.save(output)
-    doc.close()
+    if mode == "final":
+        doc.scrub(redact_images=1)
+        doc.set_metadata({"producer": "AutoRedact"})
 
-    # Create a safe filename by removing problematic characters
-    safe_filename = "".join(
-        c for c in file.filename if c.isalnum() or c in ("-", "_", ".")
+    filename, ext = os.path.splitext(safe_filename(file.filename))
+    filename = (
+        f"{filename}{'_redaction_draft' if mode == 'draft' else '_redacted'}{ext}"
     )
 
     return Response(
-        content=output.getvalue(),
+        content=doc.tobytes(garbage=1),
         media_type="application/pdf",
-        headers={
-            "Content-Disposition": f"attachment; filename={'redactiondraft_' if is_draft_mode else 'redacted_'}{safe_filename}"
-        },
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
     )
 
 

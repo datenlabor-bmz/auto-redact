@@ -31,9 +31,9 @@ export const downloadPdf = async (
     });
 
     formData.append("annotations", JSON.stringify(transformedHighlights));
-    formData.append("is_draft", JSON.stringify(isDraft));
+    formData.append("mode", isDraft ? "draft" : "final");
 
-    const response = await fetch("/api/save-annotations", {
+    const response = await fetch("/api/download-pdf", {
       method: "POST",
       body: formData,
     });
