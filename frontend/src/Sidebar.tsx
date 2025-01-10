@@ -61,58 +61,62 @@ export function Sidebar({
   };
 
   return (
-    <div className="w-[20%] min-w-[300px] h-full overflow-auto bg-neutral-background border-r border-neutral-border">
-      <div className="p-8 border-b border-neutral-border">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-2xl">⬛️</span>
-          <h1 className="text-2xl font-bold text-neutral-text-primary">
-            {t(language, "app.title")}
-          </h1>
-        </div>
-        <p className="text-sm text-primary-text">
-          {t(language, "app.subtitle")}
-        </p>
-      </div>
+    <div className="w-[25%] min-w-[300px] h-full overflow-auto bg-neutral-background border-r border-neutral-border">
+      <div className="min-h-full flex flex-col justify-between">
+        <div>
+          <div className="p-8 border-b border-neutral-border">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-2xl">⬛️</span>
+              <h1 className="text-2xl font-bold text-neutral-text-primary">
+                {t(language, "app.title")}
+              </h1>
+            </div>
+            <p className="text-sm text-primary-text">
+              {t(language, "app.subtitle")}
+            </p>
+          </div>
 
-      <div className="p-8 space-y-6">
-        <FileUpload
-          onFileUpload={async (event: React.ChangeEvent<HTMLInputElement>) =>
-            await uploadPdf(event, onFileUpload)
-          }
-          currentFileName={currentPdfFile?.name}
-          currentPdfFile={currentPdfFile}
-          highlights={highlights}
-        />
-
-        {currentPdfFile && (
-          <>
-            <PromptInput
-              customPrompt={customPrompt}
-              setCustomPrompt={setCustomPrompt}
-              onAnalyzePdf={async () =>
-                analyzePdf(
-                  currentPdfFile,
-                  customPrompt,
-                  setHighlights,
-                  setIsAnalyzing
-                )
+          <div className="p-8 space-y-6">
+            <FileUpload
+              onFileUpload={async (event: React.ChangeEvent<HTMLInputElement>) =>
+                await uploadPdf(event, onFileUpload)
               }
-              isAnalyzing={isAnalyzing}
+              currentFileName={currentPdfFile?.name}
+              currentPdfFile={currentPdfFile}
+              highlights={highlights}
             />
-            <RedactionHints />
-          </>
-        )}
 
-        <SidebarHighlightsList
-          highlights={highlights}
-          resetHighlights={resetHighlights}
-          onDeleteHighlight={onDeleteHighlight}
-          updateHighlightRule={updateHighlightRule}
-          updateHash={updateHash}
-          rules={ifgRules}
-        />
+            {currentPdfFile && (
+              <>
+                <PromptInput
+                  customPrompt={customPrompt}
+                  setCustomPrompt={setCustomPrompt}
+                  onAnalyzePdf={async () =>
+                    analyzePdf(
+                      currentPdfFile,
+                      customPrompt,
+                      setHighlights,
+                      setIsAnalyzing
+                    )
+                  }
+                  isAnalyzing={isAnalyzing}
+                />
+                <RedactionHints />
+              </>
+            )}
 
-        <div className="pt-6 border-t border-neutral-border">
+            <SidebarHighlightsList
+              highlights={highlights}
+              resetHighlights={resetHighlights}
+              onDeleteHighlight={onDeleteHighlight}
+              updateHighlightRule={updateHighlightRule}
+              updateHash={updateHash}
+              rules={ifgRules}
+            />
+          </div>
+        </div>
+
+        <div className="py-8 px-4 border-t border-neutral-border">
           <SidebarFooter />
         </div>
       </div>
