@@ -14,7 +14,11 @@ interface Props {
   highlights: Array<SecuredactHighlight>;
   resetHighlights: () => void;
   toggleDocument: () => void;
-  onFileUpload: (fileUrl: string, file: File) => void;
+  onFileUpload: (
+    fileUrl: string,
+    file: File,
+    highlights: Array<SecuredactHighlight>
+  ) => void;
   onDeleteHighlight?: (id: string) => void;
   onBackendHighlights: (highlights: Array<SecuredactHighlight>) => void;
   currentPdfFile: File | null;
@@ -78,9 +82,9 @@ export function Sidebar({
 
           <div className="p-8 space-y-6">
             <FileUpload
-              onFileUpload={async (event: React.ChangeEvent<HTMLInputElement>) =>
-                await uploadPdf(event, onFileUpload)
-              }
+              onFileUpload={async (
+                event: React.ChangeEvent<HTMLInputElement>
+              ) => await uploadPdf(event, onFileUpload)}
               currentFileName={currentPdfFile?.name}
               currentPdfFile={currentPdfFile}
               highlights={highlights}
