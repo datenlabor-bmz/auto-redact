@@ -1,9 +1,12 @@
+import * as React from "react";
 import type { IHighlight } from "react-pdf-highlighter";
+import type { SecuredactHighlight } from "../types/highlights";
 
 export const analyzePdf = async (
   currentPdfFile: File,
   customPrompt: string,
-  setHighlights: React.Dispatch<React.SetStateAction<IHighlight[]>>,
+  highlights: Array<SecuredactHighlight>,
+  setHighlights: (highlights: Array<SecuredactHighlight>) => void,
   setIsAnalyzing: (isAnalyzing: boolean) => void
 ) => {
   if (!currentPdfFile) return;
@@ -81,7 +84,7 @@ export const analyzePdf = async (
               id: String(Math.random()).slice(2),
             };
 
-            setHighlights((prev) => [...prev, highlight]);
+            setHighlights([...highlights, highlight]);
           },
         })
       );

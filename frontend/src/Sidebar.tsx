@@ -99,6 +99,7 @@ export function Sidebar({
                     analyzePdf(
                       currentPdfFile,
                       customPrompt,
+                      highlights,
                       setHighlights,
                       setIsAnalyzing
                     )
