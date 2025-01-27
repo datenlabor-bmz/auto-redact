@@ -20,9 +20,9 @@ from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import base64
-
+from pymupdf import Document, Page, Annot
 from processing import process_pdf_streaming
-
+from typing import cast
 app = FastAPI()
 api_router = APIRouter()
 
@@ -97,7 +97,7 @@ def upload_pdf(file: UploadFile = File(...)):
                             ],
                         },
                         "content": {"text": annot.info.get("subject", "")},
-                        "id": hash(annot)
+                        "id": hash(annot),
                         # "ifgRule": None, # annot.info.get("content", {}),
                     }
                     highlights.append(highlight)
@@ -137,10 +137,12 @@ def download_pdf(
     contents = file.file.read()
     pdf_stream = io.BytesIO(contents)
     doc = pymupdf.open(stream=pdf_stream, filetype="pdf")
+    doc = cast(Document, doc)
 
     # Process each highlight
     for highlight in highlights:
         page = doc[highlight["position"]["pageNumber"] - 1]  # 0-based index
+        page = cast(Page, page)
         rect = highlight["position"]["boundingRect"]
         # We could also use the individual rects that make up for example a paragraph of multiple lines of different shapes, but according to https://pymupdf.readthedocs.io/en/latest/page.html#Page.add_redact_annot, "if a quad is specified, then the enveloping rectangle is taken" anyway.
 
@@ -168,9 +170,17 @@ def download_pdf(
         ]
         pink = (1, 0.41, 0.71)
         ifgRule = highlight.get("ifgRule", {})
-        short_text = f"{ifgRule.get('title', '')}, {ifgRule.get('reference', '')}"
-        long_text = f"{ifgRule.get('reference', '')}\n\n{ifgRule.get('title', '')}\n\n{ifgRule.get('full_text', '')}\n\n{ifgRule.get('url', '')}"
-        annot = page.add_redact_annot(
+        short_text = (
+            f"{ifgRule.get('title', '')}, {ifgRule.get('reference', '')}"
+            if ifgRule
+            else ""
+        )
+        long_text = (
+            f"{ifgRule.get('reference', '')}\n\n{ifgRule.get('title', '')}\n\n{ifgRule.get('full_text', '')}\n\n{ifgRule.get('url', '')}"
+            if ifgRule
+            else ""
+        )
+        annot: Annot = page.add_redact_annot(
             quad=coords,
             text=short_text,
             cross_out=False,
@@ -178,6 +188,8 @@ def download_pdf(
         )
         annot.set_info(content=long_text, subject=highlight["content"]["text"])
         # There's some arguments for using other kinds of annotations such as highlight_annot for drafts, because they are displayed better in some viewers such as Apple Preview; but for the sake of standardization, we stick with redact_annot.
+        if mode == "final":
+            page.apply_redactions()  # This is also done by `scrub` below, but `scrub` gets into errors with redaction annotations, so we already apply them here.
 
     if mode == "final":
         doc.scrub(redact_images=1)
