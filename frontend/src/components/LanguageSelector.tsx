@@ -8,8 +8,8 @@ interface LanguageSelectorProps {
 }
 
 const languageOptions = [
-  { value: 'en', label: '🇬🇧 English' },
-  { value: 'de', label: '🇩🇪 Deutsch' }
+  { value: "en", label: "🇬🇧 English" },
+  { value: "de", label: "🇩🇪 Deutsch" },
 ];
 
 export function LanguageSelector({

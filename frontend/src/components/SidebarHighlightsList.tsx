@@ -63,10 +63,12 @@ export function SidebarHighlightsList({
           return (
             <React.Fragment key={highlight.id}>
               {showPageNumber && (
-                <div className={`
+                <div
+                  className={`
                   text-xs text-neutral-text-tertiary py-0.5
-                  ${index === 0 ? 'mt-0' : 'mt-1'}
-                `}>
+                  ${index === 0 ? "mt-0" : "mt-1"}
+                `}
+                >
                   Page {highlight.position.pageNumber}
                 </div>
               )}

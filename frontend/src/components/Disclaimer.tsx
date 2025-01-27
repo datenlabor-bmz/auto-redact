@@ -11,12 +11,14 @@ export const Disclaimer: React.FC<DisclaimerProps> = ({ onClose }) => {
   const { language } = useLanguage();
 
   return (
-    <div className="
+    <div
+      className="
       bg-yellow-50 text-yellow-800 
       px-4 py-3 text-center text-sm
       border-b border-yellow-100
       relative
-    ">
+    "
+    >
       <span role="img" aria-label="warning" className="mr-2">
         ⚠️
       </span>

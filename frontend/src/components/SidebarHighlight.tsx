@@ -24,7 +24,7 @@ export function SidebarHighlight({
 }: Props) {
   return (
     <li className="relative">
-      <Card 
+      <Card
         className="p-3 bg-blue-50 border-blue-200 cursor-pointer"
         onClick={() => updateHash(highlight)}
       >
@@ -46,7 +46,7 @@ export function SidebarHighlight({
             >
               ×
             </Button>
-            
+
             {highlight.content.text && (
               <blockquote className="flex-1 m-0 text-sm leading-relaxed text-slate-700">
                 {highlight.content.text.length > 60
@@ -54,7 +54,7 @@ export function SidebarHighlight({
                   : highlight.content.text.trim()}
               </blockquote>
             )}
-            
+
             {highlight.content.image && (
               <div className="mt-8 overflow-auto">
                 <img
@@ -66,7 +66,7 @@ export function SidebarHighlight({
             )}
           </div>
         </div>
-        
+
         <IFGRuleSelector
           rules={rules}
           selectedRule={highlight.ifgRule}

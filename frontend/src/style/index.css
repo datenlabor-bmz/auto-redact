@@ -11,7 +11,9 @@
 }
 
 @layer base {
-  html, body, #root {
+  html,
+  body,
+  #root {
     @apply h-full m-0;
   }
 

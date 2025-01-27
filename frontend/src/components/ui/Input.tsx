@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -7,13 +7,13 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   helperText?: string;
 }
 
-export function Input({ 
-  label, 
-  error, 
-  icon, 
+export function Input({
+  label,
+  error,
+  icon,
   helperText,
-  className = '', 
-  ...props 
+  className = "",
+  ...props
 }: InputProps) {
   return (
     <div className="space-y-1">
@@ -35,18 +35,20 @@ export function Input({
             placeholder:text-neutral-text-tertiary
             focus:border-primary-main focus:ring-1 focus:ring-primary-main
             disabled:bg-neutral-background disabled:cursor-not-allowed
-            ${icon ? 'pl-10' : ''}
-            ${error ? 'border-red-500' : ''}
+            ${icon ? "pl-10" : ""}
+            ${error ? "border-red-500" : ""}
             ${className}
           `}
           {...props}
         />
       </div>
       {(error || helperText) && (
-        <p className={`text-sm ${error ? 'text-red-500' : 'text-neutral-text-tertiary'}`}>
+        <p
+          className={`text-sm ${error ? "text-red-500" : "text-neutral-text-tertiary"}`}
+        >
           {error || helperText}
         </p>
       )}
     </div>
   );
-} 
+}

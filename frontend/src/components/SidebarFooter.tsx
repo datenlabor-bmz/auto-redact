@@ -21,7 +21,7 @@ export function SidebarFooter() {
             onMouseLeave={() => setShowTooltip(false)}
             className={`
               flex items-center gap-1 px-2 py-1 rounded-lg cursor-help relative
-              ${showTooltip ? 'bg-gray-100' : 'bg-transparent'}
+              ${showTooltip ? "bg-gray-100" : "bg-transparent"}
               transition-all duration-200
             `}
           >
@@ -29,11 +29,13 @@ export function SidebarFooter() {
             <span className="text-xl">🇪🇺</span>
             <span className="text-xl">🇺🇳</span>
             {showTooltip && (
-              <div className="
+              <div
+                className="
                 absolute bottom-full left-1/2 -translate-x-1/2 mb-3
                 bg-white text-gray-700 p-4 rounded-xl text-xs leading-normal
                 w-[180px] shadow-lg border border-gray-200 z-10 animate-tooltipFade
-              ">
+              "
+              >
                 <div className="mb-3 flex items-center gap-2">
                   <span className="text-lg">🇩🇪</span>
                   {t(language, "footer.madeIn")}

@@ -144,7 +144,11 @@ function AppContent() {
     );
   };
 
-  const handleFileUpload = (fileUrl: string, file: File, highlights: Array<SecuredactHighlight>) => {
+  const handleFileUpload = (
+    fileUrl: string,
+    file: File,
+    highlights: Array<SecuredactHighlight>
+  ) => {
     setUploadedPdfUrl(fileUrl);
     setUrl(fileUrl);
     setHighlights(highlights);

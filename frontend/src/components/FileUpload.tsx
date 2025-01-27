@@ -84,7 +84,7 @@ export function FileUpload({
             <span>{t(language, "fileUpload.saveDocument")}</span>
             <span className="text-xs opacity-60">▾</span>
           </button>
-          
+
           {showOptions && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-neutral-border rounded-lg shadow-lg overflow-hidden z-10">
               <button

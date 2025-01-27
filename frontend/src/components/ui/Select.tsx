@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 
 interface SelectOption {
   value: string;
@@ -11,10 +11,11 @@ interface SelectGroup {
   options: SelectOption[];
 }
 
-interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
+interface SelectProps
+  extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "size"> {
   options: (SelectOption | SelectGroup)[];
   placeholder?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   error?: string;
   minimal?: boolean;
 }
@@ -22,23 +23,23 @@ interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>
 export function Select({
   options,
   placeholder,
-  size = 'md',
+  size = "md",
   error,
   minimal = false,
-  className = '',
+  className = "",
   ...props
 }: SelectProps) {
   const sizes = {
-    sm: 'text-sm py-0.5',
-    md: 'text-base py-1',
-    lg: 'text-lg py-1.5'
+    sm: "text-sm py-0.5",
+    md: "text-base py-1",
+    lg: "text-lg py-1.5",
   };
 
   return (
     <div>
       <select
         className={`
-          ${minimal ? 'border border-gray-300 rounded' : 'border border-gray-300 rounded bg-white px-2'}
+          ${minimal ? "border border-gray-300 rounded" : "border border-gray-300 rounded bg-white px-2"}
           ${sizes[size]}
           ${className}
         `}
@@ -50,7 +51,7 @@ export function Select({
           </option>
         )}
         {options.map((item, index) => {
-          if ('options' in item) {
+          if ("options" in item) {
             // It's a group
             return (
               <optgroup key={index} label={item.label}>
@@ -68,20 +69,14 @@ export function Select({
           } else {
             // It's a single option
             return (
-              <option
-                key={index}
-                value={item.value}
-                title={item.title}
-              >
+              <option key={index} value={item.value} title={item.title}>
                 {item.label}
               </option>
             );
           }
         })}
       </select>
-      {error && (
-        <p className="mt-1 text-sm text-red-500">{error}</p>
-      )}
+      {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
     </div>
   );
-} 
+}
