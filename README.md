@@ -42,7 +42,7 @@ npm start
 
 # Backend
 cd backend
-uv run python -muvicorn app:app --reload
+uv run python -m uvicorn main:app --reload
 ```
 
 ## License
