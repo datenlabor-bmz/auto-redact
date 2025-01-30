@@ -13,10 +13,14 @@ export const translations = {
     fileUpload: {
       title: "Upload PDF Document",
       subtitle: "or drop file here",
+      dropHere: "Drop PDF here",
       changeDocument: "Click to change document",
       saveDocument: "Save document...",
       downloadDraft: "Download draft",
       downloadRedacted: "Download redacted document",
+      dragActive: "Release to upload PDF",
+      invalidFile: "Please upload a PDF file",
+      processingFile: "Processing your file...",
     },
     redactionHints: {
       title: "💡 Quick Tips:",
@@ -63,10 +67,14 @@ export const translations = {
     fileUpload: {
       title: "PDF-Dokument hochladen",
       subtitle: "oder Datei hier ablegen",
-      changeDocument: "Dokumentenupload",
+      dropHere: "PDF hier ablegen",
+      changeDocument: "Anderes PDF hochladen",
       saveDocument: "Dokument speichern...",
       downloadDraft: "Entwurf herunterladen",
       downloadRedacted: "Geschwärztes Dokument herunterladen",
+      dragActive: "Zum Hochladen loslassen",
+      invalidFile: "Bitte laden Sie eine PDF-Datei hoch",
+      processingFile: "Datei wird verarbeitet...",
     },
     redactionHints: {
       title: "💡 Tipps:",

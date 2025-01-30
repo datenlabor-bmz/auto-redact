@@ -26,7 +26,14 @@ export default {
         action: {
           hover: "#f1f5f9",
           active: "#e2e8f0",
+          dragover: "#bfdbfe",
+          dragborder: "#3b82f6",
         },
+      },
+      boxShadow: {
+        'upload': '0 2px 4px rgba(0, 0, 0, 0.05)',
+        'upload-hover': '0 4px 6px rgba(0, 0, 0, 0.1)',
+        'upload-active': '0 1px 2px rgba(0, 0, 0, 0.05)',
       },
     },
   },
