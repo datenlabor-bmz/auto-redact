@@ -22,9 +22,11 @@ export function FileUpload({
 }: Props) {
   const { language } = useLanguage();
   const [showOptions, setShowOptions] = React.useState(false);
+  const [isDragging, setIsDragging] = React.useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  // Close dropdown when clicking outside
   React.useEffect(() => {
+    // Close dropdown when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       if (!target.closest(".download-dropdown")) {
@@ -36,10 +38,58 @@ export function FileUpload({
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
+  const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragEnter = () => {
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    // Because onFileUpload expects a React.ChangeEvent, we'll build a synthetic event
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const droppedFiles = e.dataTransfer.files;
+
+      const syntheticTarget = {
+        ...fileInputRef.current,
+        files: droppedFiles,
+      } as unknown as EventTarget & HTMLInputElement;
+
+      const syntheticEvent = {
+        target: syntheticTarget,
+        currentTarget: syntheticTarget,
+        preventDefault() {},
+        stopPropagation() {},
+      } as unknown as React.ChangeEvent<HTMLInputElement>;
+
+      onFileUpload(syntheticEvent);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4">
-      <label className="flex items-center gap-4 p-4 bg-white border border-neutral-border rounded-lg cursor-pointer hover:bg-action-hover transition-colors duration-200">
+      <label
+        className={`
+          flex items-center gap-4 p-4 bg-white border border-neutral-border 
+          rounded-lg cursor-pointer hover:bg-action-hover transition-colors duration-200
+          ${isDragging ? "bg-blue-100 border-blue-400" : ""}
+        `}
+        onDragOver={handleDragOver}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
         <input
+          ref={fileInputRef}
           type="file"
           accept=".pdf"
           onChange={onFileUpload}
@@ -75,7 +125,8 @@ export function FileUpload({
       {currentPdfFile && (
         <div className="download-dropdown relative">
           <button
-            className="w-full px-4 py-3 text-sm font-medium text-neutral-text-primary bg-white border border-neutral-border rounded-lg hover:bg-action-hover transition-colors duration-200 flex items-center justify-between"
+            className="w-full px-4 py-3 text-sm font-medium text-neutral-text-primary bg-white border border-neutral-border 
+                       rounded-lg hover:bg-action-hover transition-colors duration-200 flex items-center justify-between"
             onClick={(e) => {
               e.stopPropagation();
               setShowOptions(!showOptions);
@@ -86,9 +137,13 @@ export function FileUpload({
           </button>
 
           {showOptions && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-neutral-border rounded-lg shadow-lg overflow-hidden z-10">
+            <div
+              className="absolute top-full left-0 right-0 mt-1 bg-white border border-neutral-border 
+                            rounded-lg shadow-lg overflow-hidden z-10"
+            >
               <button
-                className="w-full px-4 py-3 text-sm text-left hover:bg-action-hover transition-colors duration-200 flex items-center gap-3"
+                className="w-full px-4 py-3 text-sm text-left hover:bg-action-hover transition-colors duration-200 
+                           flex items-center gap-3"
                 onClick={() => {
                   downloadPdf(currentPdfFile, highlights, true);
                   setShowOptions(false);
@@ -98,7 +153,8 @@ export function FileUpload({
                 {t(language, "fileUpload.downloadDraft")}
               </button>
               <button
-                className="w-full px-4 py-3 text-sm text-left hover:bg-action-hover transition-colors duration-200 flex items-center gap-3 border-t border-neutral-border"
+                className="w-full px-4 py-3 text-sm text-left hover:bg-action-hover transition-colors duration-200 
+                           flex items-center gap-3 border-t border-neutral-border"
                 onClick={() => {
                   downloadPdf(currentPdfFile, highlights, false);
                   setShowOptions(false);
