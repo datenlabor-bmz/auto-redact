@@ -38,12 +38,14 @@ Or run locally:
 # Frontend
 cd frontend
 npm install
-npm start
+npm run dev
 
 # Backend
 cd backend
 uv run python -m uvicorn main:app --reload
 ```
+
+**Note:** When using `npm run dev`, loaded / generated highlights will not be displayed instantly, but this does work with the built version, which can also be started using `npm run preview`.
 
 ## License
 
