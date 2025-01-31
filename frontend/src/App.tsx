@@ -80,35 +80,11 @@ function AppContent() {
   };
 
   const addHighlight = (highlight: NewHighlight) => {
-    const { width: viewportWidth, height: viewportHeight } =
-      highlight.position.boundingRect;
-    // Convert coordinates
+    console.log("→ highlight =", highlight);
     const enrichedHighlight: SecuredactHighlight = {
       ...highlight,
-      position: {
-        ...highlight.position,
-        boundingRect: {
-          ...highlight.position.boundingRect,
-          x1: highlight.position.boundingRect.x1,
-          y1: highlight.position.boundingRect.y1,
-          x2: highlight.position.boundingRect.x2,
-          y2: highlight.position.boundingRect.y2,
-          width: viewportWidth,
-          height: viewportHeight,
-        },
-        rects: highlight.position.rects.map((rect) => ({
-          ...rect,
-          x1: rect.x1,
-          y1: rect.y1,
-          x2: rect.x2,
-          y2: rect.y2,
-          width: viewportWidth,
-          height: viewportHeight,
-        })),
-      },
       id: getNextId(),
     };
-
     setHighlights((prevHighlights) => [enrichedHighlight, ...prevHighlights]);
   };
 
