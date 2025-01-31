@@ -171,15 +171,34 @@ function AppContent() {
                   onSelectionFinished={(
                     position,
                     content,
-                    _hideTipAndSelection,
+                    hideTipAndSelection,
                     _transformSelection
                   ) => {
-                    addHighlight({
-                      content,
-                      position,
-                      comment: { text: "", emoji: "" },
-                    });
-                    return null;
+                    const rect = position.rects[-1];
+                    console.log(rect);
+                    return (
+                      <div>
+                        <div>Grund 1</div>
+                        <div>Grund 2</div>
+                        <div>Grund 3</div>
+                        <div>Grund 4</div>
+                        <div>Grund 5</div>
+                        <button
+                          onClick={() => {
+                            addHighlight({
+                              content,
+                              position,
+                              comment: { text: "", emoji: "" },
+                            });
+                            hideTipAndSelection();
+                          }}
+                          className="select-none flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                          aria-label="Delete highlight"
+                        >
+                          +
+                        </button>
+                      </div>
+                    );
                   }}
                   highlightTransform={(
                     highlight,
@@ -191,7 +210,8 @@ function AppContent() {
                     isScrolledTo
                   ) => {
                     const isTextHighlight = !highlight.content?.image;
-                    const { left, top, width, height } = highlight.position.rects[0];
+                    const { left, top, width, height } =
+                      highlight.position.rects[0];
                     return isTextHighlight ? (
                       <div>
                         <Highlight
@@ -204,7 +224,7 @@ function AppContent() {
                           style={{
                             position: "absolute",
                             top: top - 10,
-                            left: left + width - 10
+                            left: left + width - 10,
                           }}
                           className="select-none flex items-center justify-center w-5 h-5 rounded-full bg-red-500 hover:bg-red-600 text-white text-xs font-bold shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
                           aria-label="Delete highlight"
