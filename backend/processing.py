@@ -7,6 +7,12 @@ from litellm import completion
 
 load_dotenv(override=True)
 
+with open("../rules/informationsfreiheitsgesetz.json", "r", encoding="utf-8") as f:
+    ifg_rules = json.load(f)["rules"]
+ifg_text = "\n\n".join(
+    [f"{rule['reference']}: {rule['title']}\n{rule['full_text']}" for rule in ifg_rules]
+)
+
 
 def process_pdf_streaming(doc, prompt):
     # Collect all pages with page numbers
@@ -18,31 +24,12 @@ def process_pdf_streaming(doc, prompt):
     combined_text = "\n\n".join(all_pages_text)
 
     full_prompt = dedent(f"""
-    You are a document redaction bot. Follow this exact process:
+    <BACKGROUND>
+    Informationsfreiheitsgesetz (IFG)
+    {ifg_text}
+    </BACKGROUND>
 
-    At the start of the document and each new page:
-    THINK: Analyze the overall content, identify patterns and types of sensitive information present.
-    Make high-level decisions based on concrete examples you see.
-
-    For each potentially sensitive item:
-    1. CONSIDER: Quote the sensitive phrase with its surrounding context: "..."
-    2. ANALYZE: Explain why this information might need protection
-    3. REDACT: "..." (optional, exact characters to be redacted)
-       You can have 0, 1, or multiple REDACT commands after each analysis
-
-    When moving to a new page:
-    PAGE: Specify the new page number
-
-    Important:
-    - REDACT must use exact character matches (500000 ≠ 500.000 €)
-    - Specify PAGE only when switching to a different page
-    - Each REDACT must follow a CONSIDER and ANALYZE
-                         
-    The following is an example for generically redacting sensitive information.
-    The user may ask you to redact different types of information, so you must be flexible.
-
-    ===== EXAMPLE START =====
-
+    <EXAMPLE>
     THINK: After reviewing the entire document, I observe this appears to be a financial report 
     containing sensitive information across multiple pages. The document contains:
     1. Employee personal data (emails, phone numbers, IDs)
@@ -62,11 +49,11 @@ def process_pdf_streaming(doc, prompt):
 
     CONSIDER: "For inquiries, contact our support team at support@company.com or visit www.company.com"
     ANALYZE: These are public-facing contact methods intended for customer communication
-    
+
     CONSIDER: "Project lead: Sarah Chen (sarah.chen@company.com), Direct: +1-555-0123"
     ANALYZE: This contains personal contact information of an employee
-    REDACT: "sarah.chen@company.com"
-    REDACT: "+1-555-0123"
+    REDACT: "sarah.chen@company.com" | Personenbezogene Daten
+    REDACT: "+1-555-0123" | Personenbezogene Daten
 
     CONSIDER: "Department budget allocation: $1,500,000"
     ANALYZE: This is high-level financial information that should be public for transparency
@@ -80,21 +67,48 @@ def process_pdf_streaming(doc, prompt):
 
     CONSIDER: "Employee ID: A123 | Annual Compensation: $95,000 | Performance: 4.5/5"
     ANALYZE: This reveals detailed personal employment information
-    REDACT: "A123"
-    REDACT: "$95,000"
-    REDACT: "4.5/5"
+    REDACT: "A123" | Personenbezogene Daten
+    REDACT: "$95,000" | Personenbezogene Daten
+    REDACT: "4.5/5" | Personenbezogene Daten
 
     CONSIDER: "Project PRJ-5421 status: ON_TRACK | Budget remaining: $50,000"
-    ANALYZE: The project code and status are internal identifiers that should be protected
-    REDACT: "PRJ-5421"
+    ANALYZE: The project code may be an internal identifier, but is not specifically sensitive. The budget refers to the ministry's budget, which is public.
+    </EXAMPLE>
 
-    ===== EXAMPLE END =====
+    <INSTRUCTIONS>
+    You are a document redaction bot. Follow this exact process:
 
+    At the start of the document and each new page:
+    PAGE: Specify the page number (do not use any markdown or other formatting)
+    THINK: Analyze the overall content, identify patterns and types of sensitive information present.
+    Make high-level decisions based on concrete examples you see.
+
+    For each potentially sensitive item:
+    1. CONSIDER: Quote the sensitive phrase with its surrounding context: "..."
+    2. ANALYZE: Explain why this information might need protection
+    3. REDACT: "..." (optional, exact characters to be redacted) | reason according to IFG (exact reference to the title of the rule as specified in the background; only use the literal title, no citation or other information)
+       You can have 0, 1, or multiple REDACT commands after each analysis
+
+    When moving to a new page:
+    PAGE: Specify the new page number
+
+    Important:
+    - REDACT must use exact character matches (500000 ≠ 500.000 €)
+    - Specify PAGE only when switching to a different page
+    - Each REDACT must follow a CONSIDER and ANALYZE
+                         
+    The following is an example for generically redacting sensitive information.
+    The user may ask you to redact different types of information, so you must be flexible.
+    </INSTRUCTIONS>
+    <USER_PROMPT>
     Here is what the user has asked you to do:
     "{prompt}"
-
+    </USER_PROMPT>
+    <TEXT_TO_ANALYZE>
     Text to analyze ({doc.page_count} pages):
-    {combined_text}""")
+    {combined_text}
+    </TEXT_TO_ANALYZE>
+    """)
 
     def generate():
         yield 'data: {"status": "started"}\n\n'
@@ -130,12 +144,17 @@ def process_pdf_streaming(doc, prompt):
                     elif line.startswith("PAGE:"):
                         current_page = int(line[5:].strip())
                     elif line.startswith('REDACT: "'):
-                        redact_text = line[8:].strip().strip('"')
+                        redact_text, reason = line[8:].strip().split("|")
+                        redact_text = redact_text.strip().strip('"')
+                        reason = reason.strip()
+                        ifg_rule = next(
+                            (rule for rule in ifg_rules if rule["title"] == reason),
+                            None,
+                        )
                         if current_page and redact_text:
                             try:
                                 page = doc[current_page - 1]
                                 matches = page.search_for(redact_text)
-
                                 if matches:
                                     if len(matches) > 1:
                                         print(
@@ -162,6 +181,7 @@ def process_pdf_streaming(doc, prompt):
                                                 "rects": [rect],
                                                 "pageNumber": current_page,
                                             },
+                                            "ifgRule": ifg_rule,
                                         }
                                         yield f"data: {json.dumps(highlight)}\n\n"
 
