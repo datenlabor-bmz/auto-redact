@@ -20,6 +20,8 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import type { IFGRule, SecuredactHighlight } from "./types/highlights";
 import { useLanguage } from "./contexts/LanguageContext";
 import { t } from "./translations";
+import { IFGRulePopupSelector } from "./components/IFGRulePopupSelector";
+import { DeleteButton } from "./components/DeleteButton";
 
 import "./style/App.css";
 import "../node_modules/react-pdf-highlighter/dist/style.css";
@@ -160,7 +162,7 @@ function AppContent() {
         <div className="pdf-viewer">
           {url ? (
             <PdfLoader url={url} beforeLoad={<Spinner />}>
-              {(pdfDocument) => (
+              {(pdfDocument): React.ReactElement => (
                 <PdfHighlighter
                   pdfDocument={pdfDocument}
                   pdfScaleValue="page-width"
@@ -178,93 +180,29 @@ function AppContent() {
                     hideTipAndSelection,
                     _transformSelection
                   ) => {
-                    // Sort rules by reference for consistent ordering
-                    const sortedRules = [...ifgRules].sort((a, b) => 
-                      a.reference.localeCompare(b.reference)
-                    );
-
                     return (
-                      <div className="flex flex-row justify-center items-start gap-2">
-                        <button
-                          onClick={() => {
+                      <IFGRulePopupSelector
+                        rules={ifgRules}
+                        onRuleSelect={(rule) => {
+                          if (rule) {
                             addHighlight({
                               content,
                               position,
                               comment: { text: "", emoji: "" },
+                              ifgRule: rule,
                             });
-                            hideTipAndSelection();
-                          }}
-                          className="select-none flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
-                          aria-label="Add highlight"
-                        >
-                          +
-                        </button>
-                        <div className="grid grid-cols-[1fr,1px,1fr] gap-x-4 bg-white border border-gray-300 rounded-md p-2 shadow-md max-w-2xl">
-                          <div className="space-y-0.5">
-                            {sortedRules.slice(0, Math.ceil(sortedRules.length / 2)).map((rule, index) => {
-                              const currentParagraph = rule.reference.slice(0, 2);
-                              const previousParagraph = index > 0 ? 
-                                sortedRules[index - 1].reference.slice(0, 2) : null;
-                              const isFirstInParagraph = currentParagraph !== previousParagraph;
-
-                              return (
-                                <div
-                                  key={rule.reference}
-                                  onClick={() => {
-                                    addHighlight({
-                                      content,
-                                      position,
-                                      comment: { text: "", emoji: "" },
-                                      ifgRule: rule,
-                                    });
-                                    hideTipAndSelection();
-                                  }}
-                                  className="cursor-pointer hover:bg-gray-100 rounded px-2 py-1 text-sm flex items-start"
-                                >
-                                  <div className="w-9 shrink-0">
-                                    {isFirstInParagraph && (
-                                      <span className="text-gray-500 font-medium">§{currentParagraph}</span>
-                                    )}
-                                  </div>
-                                  <span className="text-gray-900 break-words">{rule.title}</span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                          <div className="w-px bg-gray-200 h-full" />
-                          <div className="space-y-0.5">
-                            {sortedRules.slice(Math.ceil(sortedRules.length / 2)).map((rule, index) => {
-                              const currentParagraph = rule.reference.slice(0, 2);
-                              const previousParagraph = index > 0 ? 
-                                sortedRules.slice(Math.ceil(sortedRules.length / 2))[index - 1].reference.slice(0, 2) : null;
-                              const isFirstInParagraph = currentParagraph !== previousParagraph;
-
-                              return (
-                                <div
-                                  key={rule.reference}
-                                  onClick={() => {
-                                    addHighlight({
-                                      content,
-                                      position,
-                                      comment: { text: "", emoji: "" },
-                                      ifgRule: rule,
-                                    });
-                                    hideTipAndSelection();
-                                  }}
-                                  className="cursor-pointer hover:bg-gray-100 rounded px-2 py-1 text-sm flex items-start"
-                                >
-                                  <div className="w-9 shrink-0">
-                                    {isFirstInParagraph && (
-                                      <span className="text-gray-500 font-medium">§{currentParagraph}</span>
-                                    )}
-                                  </div>
-                                  <span className="text-gray-900 break-words">{rule.title}</span>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </div>
+                          }
+                          hideTipAndSelection();
+                        }}
+                        onSimpleHighlight={() => {
+                          addHighlight({
+                            content,
+                            position,
+                            comment: { text: "", emoji: "" },
+                          });
+                          hideTipAndSelection();
+                        }}
+                      />
                     );
                   }}
                   highlightTransform={(
@@ -277,40 +215,31 @@ function AppContent() {
                     isScrolledTo
                   ) => {
                     const isTextHighlight = !highlight.content?.image;
-                    const { left, top, width, height } =
-                      highlight.position.rects[0];
-                    return isTextHighlight ? (
-                      <div>
-                        <Highlight
-                          isScrolledTo={isScrolledTo}
-                          position={highlight.position}
-                          comment={highlight.comment}
-                        />
-                        <button
-                          onClick={() => deleteHighlight(highlight.id)}
-                          style={{
-                            position: "absolute",
-                            top: top - 10,
-                            left: left + width - 10,
-                          }}
-                          className="select-none flex items-center justify-center w-5 h-5 rounded-full bg-red-500 hover:bg-red-600 text-white text-xs font-bold shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
-                          aria-label="Delete highlight"
-                        >
-                          ×
-                        </button>
-                      </div>
+                    const highlightElement = isTextHighlight ? (
+                      <Highlight
+                        isScrolledTo={isScrolledTo}
+                        position={highlight.position}
+                        comment={highlight.comment}
+                      />
                     ) : (
-                      <div onClick={() => deleteHighlight(highlight.id)}>
-                        <AreaHighlight
-                          isScrolledTo={isScrolledTo}
+                      <AreaHighlight
+                        isScrolledTo={isScrolledTo}
+                        highlight={highlight}
+                        onChange={(boundingRect) => {
+                          updateHighlight(
+                            highlight.id,
+                            { boundingRect: viewportToScaled(boundingRect) },
+                            { image: screenshot(boundingRect) }
+                          );
+                        }}
+                      />
+                    );
+                    return (
+                      <div>
+                        {highlightElement}
+                        <DeleteButton
+                          onClick={() => deleteHighlight(highlight.id)}
                           highlight={highlight}
-                          onChange={(boundingRect) => {
-                            updateHighlight(
-                              highlight.id,
-                              { boundingRect: viewportToScaled(boundingRect) },
-                              { image: screenshot(boundingRect) }
-                            );
-                          }}
                         />
                       </div>
                     );
