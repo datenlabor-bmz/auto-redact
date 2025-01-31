@@ -123,6 +123,7 @@ function AppContent() {
   };
 
   const deleteHighlight = useCallback((id: string) => {
+    window.getSelection()?.removeAllRanges();
     setHighlights((prevHighlights) =>
       prevHighlights.filter((hl) => hl.id !== id)
     );
@@ -190,14 +191,26 @@ function AppContent() {
                     isScrolledTo
                   ) => {
                     const isTextHighlight = !highlight.content?.image;
-
+                    const { left, top, width, height } = highlight.position.rects[0];
                     return isTextHighlight ? (
-                      <div onClick={() => deleteHighlight(highlight.id)}>
+                      <div>
                         <Highlight
                           isScrolledTo={isScrolledTo}
                           position={highlight.position}
                           comment={highlight.comment}
                         />
+                        <button
+                          onClick={() => deleteHighlight(highlight.id)}
+                          style={{
+                            position: "absolute",
+                            top: top - 10,
+                            left: left + width - 10
+                          }}
+                          className="select-none flex items-center justify-center w-5 h-5 rounded-full bg-red-500 hover:bg-red-600 text-white text-xs font-bold shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
+                          aria-label="Delete highlight"
+                        >
+                          ×
+                        </button>
                       </div>
                     ) : (
                       <div onClick={() => deleteHighlight(highlight.id)}>
