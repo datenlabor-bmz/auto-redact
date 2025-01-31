@@ -80,7 +80,6 @@ function AppContent() {
   };
 
   const addHighlight = (highlight: NewHighlight) => {
-    console.log("→ highlight =", highlight);
     const enrichedHighlight: SecuredactHighlight = {
       ...highlight,
       id: getNextId(),
@@ -151,6 +150,7 @@ function AppContent() {
           isAnalyzing={isAnalyzing}
           setIsAnalyzing={setIsAnalyzing}
           setHighlights={setHighlights}
+          addHighlight={addHighlight}
         />
         <div className="pdf-viewer">
           {url ? (

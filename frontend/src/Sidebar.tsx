@@ -25,6 +25,7 @@ interface Props {
   isAnalyzing: boolean;
   setIsAnalyzing: (isAnalyzing: boolean) => void;
   setHighlights: (highlights: Array<SecuredactHighlight>) => void;
+  addHighlight: (highlight: SecuredactHighlight) => void;
 }
 
 const updateHash = (highlight: SecuredactHighlight) => {
@@ -46,6 +47,7 @@ export function Sidebar({
   isAnalyzing,
   setIsAnalyzing,
   setHighlights,
+  addHighlight,
 }: Props) {
   const { language } = useLanguage();
 
@@ -95,9 +97,8 @@ export function Sidebar({
                     analyzePdf(
                       currentPdfFile,
                       customPrompt,
-                      highlights,
-                      setHighlights,
-                      setIsAnalyzing
+                      setIsAnalyzing,
+                      addHighlight
                     )
                   }
                   isAnalyzing={isAnalyzing}

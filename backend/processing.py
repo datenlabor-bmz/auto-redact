@@ -7,6 +7,7 @@ from litellm import completion
 
 load_dotenv(override=True)
 
+
 def process_pdf_streaming(doc, prompt):
     # Collect all pages with page numbers
     all_pages_text = []
@@ -143,17 +144,26 @@ def process_pdf_streaming(doc, prompt):
                                         # TODO: make a separate prompt to identify the correct match
                                     for rect in matches:
                                         page_rect = page.rect
-                                        result = {
-                                            "x0": rect[0],
-                                            "y0": rect[1],
-                                            "x1": rect[2],
-                                            "y1": rect[3],
-                                            "page_width": page_rect.width,
-                                            "page_height": page_rect.height,
-                                            "text": redact_text,
-                                            "page": current_page,
+                                        rect = {
+                                            "x1": rect[0],
+                                            "y1": rect[1],
+                                            "x2": rect[2],
+                                            "y2": rect[3],
+                                            "width": page_rect.width,  # page width
+                                            "height": page_rect.height,  # page height
+                                            "pageNumber": current_page,
                                         }
-                                        yield f"data: {json.dumps(result)}\n\n"
+                                        highlight = {
+                                            "content": {"text": redact_text},
+                                            "comment": {"text": "", "emoji": ""},
+                                            "id": hash(str(rect)),
+                                            "position": {
+                                                "boundingRect": rect,
+                                                "rects": [rect],
+                                                "pageNumber": current_page,
+                                            },
+                                        }
+                                        yield f"data: {json.dumps(highlight)}\n\n"
 
                             except Exception as e:
                                 print(f"Error processing redaction: {e}")

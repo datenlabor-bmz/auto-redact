@@ -1,13 +1,11 @@
 import * as React from "react";
-import type { IHighlight } from "react-pdf-highlighter";
 import type { SecuredactHighlight } from "../types/highlights";
 
 export const analyzePdf = async (
   currentPdfFile: File,
   customPrompt: string,
-  highlights: Array<SecuredactHighlight>,
-  setHighlights: (highlights: Array<SecuredactHighlight>) => void,
-  setIsAnalyzing: (isAnalyzing: boolean) => void
+  setIsAnalyzing: (isAnalyzing: boolean) => void,
+  addHighlight: (highlight: SecuredactHighlight) => void
 ) => {
   if (!currentPdfFile) return;
 
@@ -16,7 +14,6 @@ export const analyzePdf = async (
     const formData = new FormData();
     formData.append("file", currentPdfFile);
     formData.append("prompt", customPrompt);
-
     const response = await fetch("/api/analyze-pdf", {
       method: "POST",
       body: formData,
@@ -49,42 +46,13 @@ export const analyzePdf = async (
         new WritableStream({
           write(chunk) {
             const data = JSON.parse(chunk);
-
             if (data.status === "completed") {
               setIsAnalyzing(false);
               return;
             }
 
             if (data.status === "started") return;
-
-            const highlight: IHighlight = {
-              content: { text: data.text },
-              position: {
-                boundingRect: {
-                  x1: data.x0,
-                  y1: data.y0,
-                  x2: data.x1,
-                  y2: data.y1,
-                  width: data.page_width,
-                  height: data.page_height,
-                },
-                rects: [
-                  {
-                    x1: data.x0,
-                    y1: data.y0,
-                    x2: data.x1,
-                    y2: data.y1,
-                    width: data.page_width,
-                    height: data.page_height,
-                  },
-                ],
-                pageNumber: data.page,
-              },
-              comment: { text: "", emoji: "" },
-              id: String(Math.random()).slice(2),
-            };
-
-            setHighlights([...highlights, highlight]);
+            addHighlight(data);
           },
         })
       );
