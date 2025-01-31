@@ -23,6 +23,7 @@ import base64
 from pymupdf import Document, Page, Annot
 from processing import process_pdf_streaming
 from typing import cast
+
 app = FastAPI()
 api_router = APIRouter()
 
@@ -56,7 +57,6 @@ def safe_filename(filename: str) -> str:
         c if (c.isalnum() or c in safe_chars) else "_" for c in filename
     ).strip()
 
-
 @api_router.post("/upload-pdf")
 def upload_pdf(file: UploadFile = File(...)):
     """
@@ -83,20 +83,20 @@ def upload_pdf(file: UploadFile = File(...)):
                         "x2": annot.rect[2],
                         "y2": annot.rect[3],
                     }
+                    rect = {
+                        **rect,
+                        "height": page.rect.height,
+                        "width": page.rect.width,
+                        "pageNumber": page.number + 1,
+                    }
                     highlight = {
                         "position": {
-                            "pageNumber": page.number,
+                            "pageNumber": page.number + 1,
                             "boundingRect": rect,
-                            "rects": [
-                                {
-                                    **rect,
-                                    "height": rect["y2"] - rect["y1"],
-                                    "width": rect["x2"] - rect["x1"],
-                                    "pageNumber": page.number,
-                                }
-                            ],
+                            "rects": [rect],
                         },
                         "content": {"text": annot.info.get("subject", "")},
+                        "comment": {"text": "", "emoji": ""},
                         "id": hash(annot),
                         # "ifgRule": None, # annot.info.get("content", {}),
                     }
@@ -146,28 +146,28 @@ def download_pdf(
         rect = highlight["position"]["boundingRect"]
         # We could also use the individual rects that make up for example a paragraph of multiple lines of different shapes, but according to https://pymupdf.readthedocs.io/en/latest/page.html#Page.add_redact_annot, "if a quad is specified, then the enveloping rectangle is taken" anyway.
 
-        # # Print page dimensions from API call
-        # print(
-        #     f"API dimensions - Width: {rect.get('width', 'N/A')}, Height: {rect.get('height', 'N/A')}"
-        # )
+        # Transform coordinates from frontend to backend
 
-        # # Print page dimensions from PyMuPDF
-        # page_rect = page.rect
-        # print(
-        #     f"PyMuPDF dimensions - Width: {page_rect.width}, Height: {page_rect.height}"
-        # )
-        A4_WIDTH = 595
-        A4_HEIGHT = 842
-        factor_x = A4_WIDTH / rect["width"]
-        factor_y = A4_HEIGHT / rect["height"]
-        print(f"Factor x: {factor_x}, Factor y: {factor_y}")
+        # react-pdf-highlighter stores the coordinates in a relative format:
+        # the "height" and "width" attributes of the rects give the page dimensions (surprisingly, NOT the rect dimensions),
+        # and the x1, y1, x2, y2 attributes are relative to the page dimensions.
+        # For PyMuPDF, we need to convert these relative coordinates to absolute coordinates.
 
+        page_width_frontend = rect.get("width")
+        page_height_frontend = rect.get("height")
+        page_width_backend = page.rect.width
+        page_height_backend = page.rect.height
+
+        factor_x = page_width_backend / page_width_frontend
+        factor_y = page_height_backend / page_height_frontend
         coords = [
             rect["x1"] * factor_x,
             rect["y1"] * factor_y,
             rect["x2"] * factor_x,
             rect["y2"] * factor_y,
         ]
+
+        # Create (draft) redaction annotation
         pink = (1, 0.41, 0.71)
         ifgRule = highlight.get("ifgRule", {})
         short_text = (
@@ -192,8 +192,8 @@ def download_pdf(
             page.apply_redactions()  # This is also done by `scrub` below, but `scrub` gets into errors with redaction annotations, so we already apply them here.
 
     if mode == "final":
-        doc.scrub(redact_images=1)
-        doc.set_metadata({"producer": "AutoRedact"})
+        doc.scrub(redact_images=1) # remove metadata, embeddeded files, comments, etc.
+        doc.set_metadata({"producer": "AutoRedact"}) # we want to see how often our tool will be used :)
 
     filename, ext = os.path.splitext(safe_filename(file.filename))
     filename = (
