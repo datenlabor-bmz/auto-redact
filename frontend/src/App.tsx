@@ -17,12 +17,16 @@ import { Sidebar } from "./Sidebar";
 import { Disclaimer } from "./components/Disclaimer";
 import { Spinner } from "./components/Spinner";
 import { LanguageProvider } from "./contexts/LanguageContext";
-import type { SecuredactHighlight } from "./types/highlights";
+import type { IFGRule, SecuredactHighlight } from "./types/highlights";
 import { useLanguage } from "./contexts/LanguageContext";
 import { t } from "./translations";
 
 import "./style/App.css";
 import "../node_modules/react-pdf-highlighter/dist/style.css";
+
+// Load IFG rules from the JSON file
+import ifgRulesData from "../../rules/informationsfreiheitsgesetz.json";
+const ifgRules: IFGRule[] = ifgRulesData.rules;
 
 const getNextId = () => String(Math.random()).slice(2);
 
@@ -79,7 +83,7 @@ function AppContent() {
     return highlights.find((highlight) => highlight.id === id);
   };
 
-  const addHighlight = (highlight: NewHighlight) => {
+  const addHighlight = (highlight: NewHighlight | SecuredactHighlight) => {
     const enrichedHighlight: SecuredactHighlight = {
       ...highlight,
       id: getNextId(),
@@ -174,15 +178,13 @@ function AppContent() {
                     hideTipAndSelection,
                     _transformSelection
                   ) => {
-                    const rect = position.rects[-1];
-                    console.log(rect);
+                    // Sort rules by reference for consistent ordering
+                    const sortedRules = [...ifgRules].sort((a, b) => 
+                      a.reference.localeCompare(b.reference)
+                    );
+
                     return (
-                      <div>
-                        <div>Grund 1</div>
-                        <div>Grund 2</div>
-                        <div>Grund 3</div>
-                        <div>Grund 4</div>
-                        <div>Grund 5</div>
+                      <div className="flex flex-row justify-center items-start gap-2">
                         <button
                           onClick={() => {
                             addHighlight({
@@ -193,10 +195,75 @@ function AppContent() {
                             hideTipAndSelection();
                           }}
                           className="select-none flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
-                          aria-label="Delete highlight"
+                          aria-label="Add highlight"
                         >
                           +
                         </button>
+                        <div className="grid grid-cols-[1fr,1px,1fr] gap-x-4 bg-white border border-gray-300 rounded-md p-2 shadow-md max-w-2xl">
+                          <div className="space-y-0.5">
+                            {sortedRules.slice(0, Math.ceil(sortedRules.length / 2)).map((rule, index) => {
+                              const currentParagraph = rule.reference.slice(0, 2);
+                              const previousParagraph = index > 0 ? 
+                                sortedRules[index - 1].reference.slice(0, 2) : null;
+                              const isFirstInParagraph = currentParagraph !== previousParagraph;
+
+                              return (
+                                <div
+                                  key={rule.reference}
+                                  onClick={() => {
+                                    addHighlight({
+                                      content,
+                                      position,
+                                      comment: { text: "", emoji: "" },
+                                      ifgRule: rule,
+                                    });
+                                    hideTipAndSelection();
+                                  }}
+                                  className="cursor-pointer hover:bg-gray-100 rounded px-2 py-1 text-sm flex items-start"
+                                >
+                                  <div className="w-9 shrink-0">
+                                    {isFirstInParagraph && (
+                                      <span className="text-gray-500 font-medium">§{currentParagraph}</span>
+                                    )}
+                                  </div>
+                                  <span className="text-gray-900 break-words">{rule.title}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <div className="w-px bg-gray-200 h-full" />
+                          <div className="space-y-0.5">
+                            {sortedRules.slice(Math.ceil(sortedRules.length / 2)).map((rule, index) => {
+                              const currentParagraph = rule.reference.slice(0, 2);
+                              const previousParagraph = index > 0 ? 
+                                sortedRules.slice(Math.ceil(sortedRules.length / 2))[index - 1].reference.slice(0, 2) : null;
+                              const isFirstInParagraph = currentParagraph !== previousParagraph;
+
+                              return (
+                                <div
+                                  key={rule.reference}
+                                  onClick={() => {
+                                    addHighlight({
+                                      content,
+                                      position,
+                                      comment: { text: "", emoji: "" },
+                                      ifgRule: rule,
+                                    });
+                                    hideTipAndSelection();
+                                  }}
+                                  className="cursor-pointer hover:bg-gray-100 rounded px-2 py-1 text-sm flex items-start"
+                                >
+                                  <div className="w-9 shrink-0">
+                                    {isFirstInParagraph && (
+                                      <span className="text-gray-500 font-medium">§{currentParagraph}</span>
+                                    )}
+                                  </div>
+                                  <span className="text-gray-900 break-words">{rule.title}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
                       </div>
                     );
                   }}
