@@ -57,6 +57,7 @@ def safe_filename(filename: str) -> str:
         c if (c.isalnum() or c in safe_chars) else "_" for c in filename
     ).strip()
 
+
 @api_router.post("/upload-pdf")
 def upload_pdf(file: UploadFile = File(...)):
     """
@@ -74,9 +75,7 @@ def upload_pdf(file: UploadFile = File(...)):
     if doc.has_annots():
         for page in doc:
             for annot in page.annots():
-                print(annot.type)
-                if annot.type[0] == 12 or True:
-                    print(annot.rect)
+                if annot.type[0] == 12:
                     rect = {
                         "x1": annot.rect[0],
                         "y1": annot.rect[1],
@@ -98,8 +97,15 @@ def upload_pdf(file: UploadFile = File(...)):
                         "content": {"text": annot.info.get("subject", "")},
                         "comment": {"text": "", "emoji": ""},
                         "id": hash(annot),
-                        # "ifgRule": None, # annot.info.get("content", {}),
                     }
+                    if comment := annot.info.get("content"):
+                        reference, title, full_text, url = comment.split("\n\n")
+                        highlight["ifgRule"] = {
+                            "reference": reference,
+                            "title": title,
+                            "full_text": full_text,
+                            "url": url,
+                        }
                     highlights.append(highlight)
                     page.delete_annot(annot)
 
@@ -192,8 +198,9 @@ def download_pdf(
             page.apply_redactions()  # This is also done by `scrub` below, but `scrub` gets into errors with redaction annotations, so we already apply them here.
 
     if mode == "final":
-        doc.scrub(redact_images=1) # remove metadata, embeddeded files, comments, etc.
-        doc.set_metadata({"producer": "AutoRedact"}) # we want to see how often our tool will be used :)
+        doc.scrub(redact_images=1)  # remove metadata, embeddeded files, comments, etc.
+        doc.set_metadata({"producer": "AutoRedact"})
+        # we want to see how often our tool will be used :)
 
     filename, ext = os.path.splitext(safe_filename(file.filename))
     filename = (
