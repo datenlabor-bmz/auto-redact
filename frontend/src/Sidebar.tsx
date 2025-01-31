@@ -13,14 +13,12 @@ import type { IFGRule, SecuredactHighlight } from "./types/highlights";
 interface Props {
   highlights: Array<SecuredactHighlight>;
   resetHighlights: () => void;
-  toggleDocument: () => void;
   onFileUpload: (
     fileUrl: string,
     file: File,
     highlights: Array<SecuredactHighlight>
   ) => void;
   onDeleteHighlight?: (id: string) => void;
-  onBackendHighlights: (highlights: Array<SecuredactHighlight>) => void;
   currentPdfFile: File | null;
   customPrompt: string;
   setCustomPrompt: (prompt: string) => void;
@@ -40,10 +38,8 @@ const ifgRules: IFGRule[] = ifgRulesData.rules;
 export function Sidebar({
   highlights,
   resetHighlights,
-  toggleDocument,
   onFileUpload,
   onDeleteHighlight,
-  onBackendHighlights,
   currentPdfFile,
   customPrompt,
   setCustomPrompt,

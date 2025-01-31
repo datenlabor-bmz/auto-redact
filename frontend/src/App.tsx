@@ -18,6 +18,8 @@ import { Disclaimer } from "./components/Disclaimer";
 import { Spinner } from "./components/Spinner";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import type { SecuredactHighlight } from "./types/highlights";
+import { useLanguage } from "./contexts/LanguageContext";
+import { t } from "./translations";
 
 import "./style/App.css";
 import "../node_modules/react-pdf-highlighter/dist/style.css";
@@ -34,24 +36,15 @@ const resetHash = () => {
 function AppContent() {
   const [url, setUrl] = useState<string | null>(null);
   const [highlights, setHighlights] = useState<Array<SecuredactHighlight>>([]);
-  const [uploadedPdfUrl, setUploadedPdfUrl] = useState<string | null>(null);
   const [currentPdfFile, setCurrentPdfFile] = useState<File | null>(null);
   const [customPrompt, setCustomPrompt] = useState<string>(
     "Redact all personal information, confidential data, and sensitive business information."
   );
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
-
+  const { language } = useLanguage();
   const resetHighlights = () => {
     setHighlights([]);
-  };
-
-  const toggleDocument = () => {
-    if (uploadedPdfUrl) {
-      setUrl(uploadedPdfUrl);
-    } else {
-      setHighlights([]);
-    }
   };
 
   const scrollViewerTo = useRef<(highlight: SecuredactHighlight) => void>(
@@ -149,33 +142,16 @@ function AppContent() {
     file: File,
     highlights: Array<SecuredactHighlight>
   ) => {
-    setUploadedPdfUrl(fileUrl);
     setUrl(fileUrl);
-    setHighlights(highlights);
     setCurrentPdfFile(file);
+    setHighlights(highlights);
   };
-
-  // Clean up object URLs when component unmounts or URL changes
-  useEffect(() => {
-    return () => {
-      if (uploadedPdfUrl) {
-        URL.revokeObjectURL(uploadedPdfUrl);
-      }
-    };
-  }, [uploadedPdfUrl]);
 
   const deleteHighlight = useCallback((id: string) => {
     setHighlights((prevHighlights) =>
       prevHighlights.filter((hl) => hl.id !== id)
     );
   }, []);
-
-  const handleBackendHighlights = useCallback(
-    (newHighlights: Array<SecuredactHighlight>) => {
-      setHighlights((prevHighlights) => [...prevHighlights, ...newHighlights]);
-    },
-    []
-  );
 
   return (
     <div className="flex flex-col h-full">
@@ -191,10 +167,8 @@ function AppContent() {
         <Sidebar
           highlights={highlights}
           resetHighlights={resetHighlights}
-          toggleDocument={toggleDocument}
           onFileUpload={handleFileUpload}
           onDeleteHighlight={deleteHighlight}
-          onBackendHighlights={handleBackendHighlights}
           currentPdfFile={currentPdfFile}
           customPrompt={customPrompt}
           setCustomPrompt={setCustomPrompt}
@@ -271,7 +245,7 @@ function AppContent() {
             </PdfLoader>
           ) : (
             <div className="flex items-center justify-center h-full text-neutral-text-tertiary">
-              No PDF document selected
+              {t(language, "fileUpload.noDocumentSelected")}
             </div>
           )}
         </div>

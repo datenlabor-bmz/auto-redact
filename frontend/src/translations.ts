@@ -21,6 +21,7 @@ export const translations = {
       dragActive: "Release to upload PDF",
       invalidFile: "Please upload a PDF file",
       processingFile: "Processing your file...",
+      noDocumentSelected: "No PDF document selected",
     },
     redactionHints: {
       title: "💡 Quick Tips:",
@@ -75,6 +76,7 @@ export const translations = {
       dragActive: "Zum Hochladen loslassen",
       invalidFile: "Bitte laden Sie eine PDF-Datei hoch",
       processingFile: "Datei wird verarbeitet...",
+      noDocumentSelected: "Kein PDF-Dokument ausgewählt",
     },
     redactionHints: {
       title: "💡 Tipps:",

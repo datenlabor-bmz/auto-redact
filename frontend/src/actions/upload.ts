@@ -38,7 +38,6 @@ export const uploadPdf = async (
       const processedFileUrl = URL.createObjectURL(
         fileWithoutRedactionAnnotations
       );
-      console.log(highlights);
       onFileUpload(
         processedFileUrl,
         fileWithoutRedactionAnnotations,
