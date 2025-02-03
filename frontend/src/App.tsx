@@ -23,7 +23,6 @@ import { t } from "./translations";
 import { IFGRulePopupSelector } from "./components/IFGRulePopupSelector";
 import { DeleteButton } from "./components/DeleteButton";
 
-import "./style/App.css";
 import "../node_modules/react-pdf-highlighter/dist/style.css";
 
 // Load IFG rules from the JSON file
