@@ -21,6 +21,8 @@ COPY backend/ .
 
 # Copy built frontend files
 COPY --from=frontend-builder /app/frontend/dist /app/backend/static
+# Copy rules again (the COPY above only puts them into the frontend build stage)
+COPY rules/ /app/rules
 
 # Expose port
 EXPOSE 8000
