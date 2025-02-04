@@ -14,7 +14,7 @@ export const analyzePdf = async (
     const formData = new FormData();
     formData.append("file", currentPdfFile);
     formData.append("prompt", customPrompt);
-    const response = await fetch("/api/analyze-pdf", {
+    const response = await fetch("api/analyze-pdf", {
       method: "POST",
       body: formData,
     });

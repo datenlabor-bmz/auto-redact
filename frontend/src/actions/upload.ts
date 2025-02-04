@@ -14,7 +14,7 @@ export const uploadPdf = async (
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("/api/upload-pdf", {
+      const response = await fetch("api/upload-pdf", {
         method: "POST",
         body: formData,
       });
