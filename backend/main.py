@@ -24,6 +24,14 @@ from pymupdf import Document, Page, Annot
 from processing import process_pdf_streaming
 from typing import cast
 
+
+from requests import get
+print("proxy", os.getenv("HTTP_PROXY"))
+print("a", get("http://example.com"))
+print("b", get("http://example.com", proxies=os.getenv("HTTP_PROXY")))
+
+
+
 app = FastAPI()
 api_router = APIRouter()
 
