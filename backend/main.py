@@ -150,51 +150,51 @@ def download_pdf(
     for highlight in highlights:
         page = doc[highlight["position"]["pageNumber"] - 1]  # 0-based index
         page = cast(Page, page)
-        rect = highlight["position"]["boundingRect"]
-        # We could also use the individual rects that make up for example a paragraph of multiple lines of different shapes, but according to https://pymupdf.readthedocs.io/en/latest/page.html#Page.add_redact_annot, "if a quad is specified, then the enveloping rectangle is taken" anyway.
+        for i, rect in enumerate(highlight["position"]["rects"]):
+            # We could also use the individual rects that make up for example a paragraph of multiple lines of different shapes, but according to https://pymupdf.readthedocs.io/en/latest/page.html#Page.add_redact_annot, "if a quad is specified, then the enveloping rectangle is taken" anyway.
 
-        # Transform coordinates from frontend to backend
+            # Transform coordinates from frontend to backend
 
-        # react-pdf-highlighter stores the coordinates in a relative format:
-        # the "height" and "width" attributes of the rects give the page dimensions (surprisingly, NOT the rect dimensions),
-        # and the x1, y1, x2, y2 attributes are relative to the page dimensions.
-        # For PyMuPDF, we need to convert these relative coordinates to absolute coordinates.
+            # react-pdf-highlighter stores the coordinates in a relative format:
+            # the "height" and "width" attributes of the rects give the page dimensions (surprisingly, NOT the rect dimensions),
+            # and the x1, y1, x2, y2 attributes are relative to the page dimensions.
+            # For PyMuPDF, we need to convert these relative coordinates to absolute coordinates.
 
-        page_width_frontend = rect.get("width")
-        page_height_frontend = rect.get("height")
-        page_width_backend = page.rect.width
-        page_height_backend = page.rect.height
+            page_width_frontend = rect.get("width")
+            page_height_frontend = rect.get("height")
+            page_width_backend = page.rect.width
+            page_height_backend = page.rect.height
 
-        factor_x = page_width_backend / page_width_frontend
-        factor_y = page_height_backend / page_height_frontend
-        coords = [
-            rect["x1"] * factor_x,
-            rect["y1"] * factor_y,
-            rect["x2"] * factor_x,
-            rect["y2"] * factor_y,
-        ]
+            factor_x = page_width_backend / page_width_frontend
+            factor_y = page_height_backend / page_height_frontend
+            coords = [
+                rect["x1"] * factor_x,
+                rect["y1"] * factor_y,
+                rect["x2"] * factor_x,
+                rect["y2"] * factor_y,
+            ]
 
-        # Create (draft) redaction annotation
-        pink = (1, 0.41, 0.71)
-        ifgRule = highlight.get("ifgRule", {})
-        short_text = (
-            f"{ifgRule.get('title', '')}, {ifgRule.get('reference', '')}"
-            if ifgRule
-            else ""
-        )
-        long_text = (
-            f"{ifgRule.get('reference', '')}\n\n{ifgRule.get('title', '')}\n\n{ifgRule.get('full_text', '')}\n\n{ifgRule.get('url', '')}"
-            if ifgRule
-            else ""
-        )
-        annot: Annot = page.add_redact_annot(
-            quad=coords,
-            text=short_text,
-            cross_out=False,
-            fill=pink,
-        )
-        annot.set_info(content=long_text, subject=highlight["content"]["text"])
-        # There's some arguments for using other kinds of annotations such as highlight_annot for drafts, because they are displayed better in some viewers such as Apple Preview; but for the sake of standardization, we stick with redact_annot.
+            # Create (draft) redaction annotation
+            pink = (1, 0.41, 0.71)
+            ifgRule = highlight.get("ifgRule", {})
+            short_text = (
+                f"{ifgRule.get('title', '')}, {ifgRule.get('reference', '')}"
+                if ifgRule
+                else ""
+            )
+            long_text = (
+                f"{ifgRule.get('reference', '')}\n\n{ifgRule.get('title', '')}\n\n{ifgRule.get('full_text', '')}\n\n{ifgRule.get('url', '')}"
+                if ifgRule
+                else ""
+            )
+            annot: Annot = page.add_redact_annot(
+                quad=coords,
+                text=short_text,
+                cross_out=False,
+                fill=pink,
+            )
+            annot.set_info(content=long_text, subject=highlight["content"]["text"])
+            # There's some arguments for using other kinds of annotations such as highlight_annot for drafts, because they are displayed better in some viewers such as Apple Preview; but for the sake of standardization, we stick with redact_annot.
         if mode == "final":
             page.apply_redactions()  # This is also done by `scrub` below, but `scrub` gets into errors with redaction annotations, so we already apply them here.
 
