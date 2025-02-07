@@ -107,7 +107,8 @@ def upload_pdf(file: UploadFile = File(...)):
                         "id": hash(annot),
                     }
                     if comment := annot.info.get("content"):
-                        reference, title, full_text, url = comment.split("\n\n")
+                        reference, title, rest = comment.split("\n\n", 2)
+                        full_text, url = rest.rsplit("\n\n", 1)
                         highlight["ifgRule"] = {
                             "reference": reference,
                             "title": title,
