@@ -1,9 +1,11 @@
 import json
 import os
+from typing import Generator
 from textwrap import dedent
 
 from dotenv import load_dotenv
 from litellm import completion
+from pymupdf import Document
 
 load_dotenv(override=True)
 
@@ -14,7 +16,7 @@ ifg_text = "\n\n".join(
 )
 
 
-def process_pdf_streaming(doc, prompt):
+def process_pdf_streaming(doc: Document, prompt: str, verbose: bool = False) -> Generator:
     # Collect all pages with page numbers
     all_pages_text = []
     for page_num, page in enumerate(doc, 1):
@@ -137,7 +139,8 @@ def process_pdf_streaming(doc, prompt):
 
                 for line in lines[:-1]:
                     line = line.strip()
-                    print(line)
+                    if verbose:
+                        print(line)
                     if not line:
                         continue
 
@@ -191,3 +194,16 @@ def process_pdf_streaming(doc, prompt):
         yield 'data: {"status": "completed"}\n\n'
 
     return generate
+
+
+def process_pdf(doc: Document, prompt: str) -> list[dict]:
+    highlights = []
+    for highlight in process_pdf_streaming(doc, prompt, verbose=False)():
+        if not highlight.startswith('data: {"status":'):
+            highlights.append(json.loads(highlight.split("data: ")[1]))
+    # remove duplicates but keep order
+    unique_highlights = []
+    for item in highlights:
+        if item not in unique_highlights:
+            unique_highlights.append(item)
+    return unique_highlights
