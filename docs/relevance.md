@@ -6,13 +6,13 @@ __How many _Freedom of Information (FOI)_ requests are posted via FragDenStaat?_
 
 On the federal level in Germany, about `3000` requests are received every year via FragDenStaat.
 
-![](./ifg_requests_timeline.svg)
+![](./relevance//ifg_requests_timeline.svg)
 
 __How many documents does the government release in response to these requests?__
 
 For about `60%` of requests, no documents are released. But other requests often release multiple documents at once, so the average number of documents released per request is about `0.7`.
 
-![](./ifg_attachments_histogram.svg)
+![](./relevance/ifg_attachments_histogram.svg)
 
 That makes for about `2000` documents per year that the government releases via FragDenStaat.
 
