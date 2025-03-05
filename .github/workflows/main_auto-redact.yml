@@ -22,15 +22,15 @@ jobs:
     - name: Log in to registry
       uses: docker/login-action@v2
       with:
-        registry: https://bmzcontainerregistry.azurecr.io/
-        username: ${{ secrets.AzureAppService_ContainerUsername_a7619c255ff24ca8952a0799a913fd5c }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_e3159b01b01c40098503d59d60b56d79 }}
+        registry: https://datenlaborbmz.azurecr.io/
+        username: ${{ secrets.AzureAppService_ContainerUsername_fd55142f694c4fa3bf4a9c8272932fc8 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_32ec2859b46c4fa88723ae4214af1650 }}
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: bmzcontainerregistry.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_a7619c255ff24ca8952a0799a913fd5c }}/datenlaborbmz/auto-redact:${{ github.sha }}
+        tags: datenlaborbmz.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_fd55142f694c4fa3bf4a9c8272932fc8 }}/auto-redact:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -47,5 +47,5 @@ jobs:
       with:
         app-name: 'auto-redact'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_e8dc764cd120469c82f8dae8cce29584 }}
-        images: 'bmzcontainerregistry.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_a7619c255ff24ca8952a0799a913fd5c }}/datenlaborbmz/auto-redact:${{ github.sha }}'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_0462710e51cc4c97aae18ef3bb4dc4b6 }}
+        images: 'datenlaborbmz.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_fd55142f694c4fa3bf4a9c8272932fc8 }}/auto-redact:${{ github.sha }}'
