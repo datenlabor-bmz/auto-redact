@@ -199,7 +199,9 @@ def download_pdf(
             page.apply_redactions()  # This is also done by `scrub` below, but `scrub` gets into errors with redaction annotations, so we already apply them here.
 
     if mode == "final":
-        doc.scrub(redact_images=1)  # remove metadata, embeddeded files, comments, etc.
+        # remove metadata, embeddeded files, comments, etc.
+        # `reset_responses` is currently deactivated because it often causes a bug
+        doc.scrub(redact_images=1, reset_responses=False)
         doc.set_metadata({"producer": "AutoRedact"})
         # we want to see how often our tool will be used :)
 
