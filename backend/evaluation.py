@@ -57,11 +57,11 @@ def simple_evaluation(true_items: list[str], pred_items: list[str]):
     return precision, recall, f1
 
 
-def evaluate_pdf_redactions(doc: Document):
+def evaluate_pdf_redactions(doc: Document, model: str):
     redactions_true = read_redactions_from_pdf(doc)
     print("True redactions:", redactions_true)
 
-    redactions_pred = process_pdf(doc, ifg_text)
+    redactions_pred = process_pdf(doc, ifg_text, model=model)
     redactions_pred = [highlight["content"]["text"] for highlight in redactions_pred]
     print("Predicted redactions:", redactions_pred)
 
@@ -71,5 +71,6 @@ def evaluate_pdf_redactions(doc: Document):
     print("F1 score:", f1)
 
 
-doc = pymupdf.open("../pdfs/draft_vermerk.pdf")
-evaluate_pdf_redactions(doc)
+doc = pymupdf.open("pdfs/draft_vermerk.pdf")
+evaluate_pdf_redactions(doc, model="azure/gpt-4o-mini")
+evaluate_pdf_redactions(doc, model="azure/gpt-4o")

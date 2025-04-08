@@ -9,7 +9,7 @@ from pymupdf import Document
 
 load_dotenv(override=True)
 
-with open("../rules/informationsfreiheitsgesetz.json", "r", encoding="utf-8") as f:
+with open("rules/informationsfreiheitsgesetz.json", "r", encoding="utf-8") as f:
     ifg_rules = json.load(f)["rules"]
 ifg_text = "\n\n".join(
     [f"{rule['reference']}: {rule['title']}\n{rule['full_text']}" for rule in ifg_rules]
@@ -17,7 +17,7 @@ ifg_text = "\n\n".join(
 
 
 def process_pdf_streaming(
-    doc: Document, prompt: str, verbose: bool = False
+    doc: Document, prompt: str, verbose: bool = False, model="azure/gpt-4o-mini"
 ) -> Generator:
     # Collect all pages with page numbers
     all_pages_text = []
@@ -121,7 +121,7 @@ def process_pdf_streaming(
         current_page = None
 
         for chunk in completion(
-            model="azure/gpt-4o-mini",
+            model=model,
             messages=[{"role": "user", "content": full_prompt}],
             api_key=os.getenv("AZURE_OPENAI_API_KEY"),
             api_base=os.getenv("AZURE_OPENAI_API_BASE"),
@@ -198,9 +198,9 @@ def process_pdf_streaming(
     return generate
 
 
-def process_pdf(doc: Document, prompt: str) -> list[dict]:
+def process_pdf(doc: Document, prompt: str, model: str = "azure/gpt-4o-mini") -> list[dict]:
     highlights = []
-    for highlight in process_pdf_streaming(doc, prompt, verbose=False)():
+    for highlight in process_pdf_streaming(doc, prompt, verbose=False, model=model)():
         if not highlight.startswith('data: {"status":'):
             highlights.append(json.loads(highlight.split("data: ")[1]))
     # remove duplicates but keep order
