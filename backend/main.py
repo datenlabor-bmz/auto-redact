@@ -197,7 +197,7 @@ def download_pdf(
             )
             annot: Annot = page.add_redact_annot(
                 quad=coords,
-                text=short_text,
+                text=short_text if i == 0 else "",
                 cross_out=False,
                 fill=pink,
             )
