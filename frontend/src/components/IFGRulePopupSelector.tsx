@@ -1,95 +1,169 @@
-import { IFGRule } from "../types/highlights";
+import { IFGRule } from '../types/highlights'
+import { useState } from 'react'
+import { Tooltip } from './ui/Tooltip'
+import { useLanguage } from '../contexts/LanguageContext'
+import { t } from '../translations'
 
 interface IFGRulePopupSelectorProps {
-  rules: IFGRule[];
-  onRuleSelect: (rule?: IFGRule) => void;
-  onSimpleHighlight: () => void;
+  rules: IFGRule[]
+  onRuleSelect: (rule?: IFGRule) => void
 }
 
-export function IFGRulePopupSelector({
+function groupRulesByGroup (rules: IFGRule[]) {
+  const groups: Record<string, IFGRule[]> = {}
+  for (const rule of rules) {
+    const group = rule.group || 'Ungrouped'
+    if (!groups[group]) {
+      groups[group] = []
+    }
+    groups[group].push(rule)
+  }
+  return groups
+}
+
+// Tooltip content component for a rule
+const RuleTooltip = ({ rule }: { rule: IFGRule }) => (
+  <div className='space-y-2'>
+    <div className='font-medium'>IFG {rule.reference}</div>
+    <div className='text-xs'>{rule.reason}</div>
+    <div className='text-xs italic mt-1'>{rule.full_text}</div>
+    {rule.url && (
+      <a
+        href={rule.url}
+        target='_blank'
+        rel='noopener noreferrer'
+        className='text-xs text-blue-600 hover:underline block mt-1'
+        onClick={e => e.stopPropagation()}
+      >
+        Gesetzestext
+      </a>
+    )}
+  </div>
+)
+
+// Chevron icon component
+const Chevron = ({ isExpanded }: { isExpanded: boolean }) => (
+  <svg
+    className='w-3 h-3 text-gray-500 flex-shrink-0'
+    fill='none'
+    stroke='currentColor'
+    viewBox='0 0 24 24'
+    xmlns='http://www.w3.org/2000/svg'
+  >
+    {isExpanded ? (
+      <path
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='2'
+        d='M19 9l-7 7-7-7'
+      ></path>
+    ) : (
+      <path
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='2'
+        d='M9 5l7 7-7 7'
+      ></path>
+    )}
+  </svg>
+)
+
+// Rule item component
+const RuleItem = ({
+  rule,
+  onSelect
+}: {
+  rule: IFGRule
+  onSelect: () => void
+}) => (
+  <Tooltip content={<RuleTooltip rule={rule} />} position='right'>
+    <div
+      onClick={onSelect}
+      className='cursor-pointer hover:bg-gray-100 rounded px-2 py-0.5 text-sm block mb-0.5'
+    >
+      <span className='truncate inline-block'>{rule.title}</span>
+    </div>
+  </Tooltip>
+)
+
+export function IFGRulePopupSelector ({
   rules,
-  onRuleSelect,
-  onSimpleHighlight,
+  onRuleSelect
 }: IFGRulePopupSelectorProps) {
-  // Sort rules by reference for consistent ordering
-  const sortedRules = [...rules].sort((a, b) =>
-    a.reference.localeCompare(b.reference)
-  );
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {}
+  )
+  const ruleGroups = groupRulesByGroup(rules)
+  const { language } = useLanguage()
+
+  const toggleGroupExpansion = (group: string) => {
+    setExpandedGroups(prev => ({
+      ...prev,
+      [group]: !prev[group]
+    }))
+  }
 
   return (
-    <div className="flex flex-row justify-center items-start gap-2">
-      <button
-        onClick={onSimpleHighlight}
-        className="select-none flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
-        aria-label="Add highlight"
-      >
-        +
-      </button>
-      <div className="grid grid-cols-[1fr,1px,1fr] gap-x-4 bg-white border border-gray-300 rounded-md p-2 shadow-md max-w-2xl">
-        <div className="space-y-0.5">
-          {sortedRules
-            .slice(0, Math.ceil(sortedRules.length / 2))
-            .map((rule, index) => {
-              const currentParagraph = rule.reference.slice(0, 2);
-              const previousParagraph =
-                index > 0 ? sortedRules[index - 1].reference.slice(0, 2) : null;
-              const isFirstInParagraph = currentParagraph !== previousParagraph;
+    <div className='bg-white border border-gray-300 rounded-md p-2 shadow-md max-w-xl w-full'>
+      <div className='w-full'>
+        {Object.entries(ruleGroups).map(([group, groupRules]) => {
+          const hasSubsections = groupRules.length > 1
+          const isExpanded = expandedGroups[group] || false
 
-              return (
-                <div
-                  key={rule.reference}
-                  onClick={() => onRuleSelect(rule)}
-                  className="cursor-pointer hover:bg-gray-100 rounded px-2 py-1 text-sm flex items-start"
-                >
-                  <div className="w-9 shrink-0">
-                    {isFirstInParagraph && (
-                      <span className="text-gray-500 font-medium">
-                        §{currentParagraph}
-                      </span>
-                    )}
+          return (
+            <div key={group} className='mb-0.5 w-full'>
+              {hasSubsections ? (
+                <>
+                  <div
+                    className='flex items-center px-2 py-1 font-medium rounded cursor-pointer hover:bg-gray-100 w-full'
+                    onClick={() => toggleGroupExpansion(group)}
+                  >
+                    <span className='mr-1.5 flex-shrink-0'>
+                      <Chevron isExpanded={isExpanded} />
+                    </span>
+                    <span className='text-sm truncate'>{group}</span>
                   </div>
-                  <span className="text-gray-900 break-words">
-                    {rule.title}
-                  </span>
-                </div>
-              );
-            })}
-        </div>
-        <div className="w-px bg-gray-200 h-full" />
-        <div className="space-y-0.5">
-          {sortedRules
-            .slice(Math.ceil(sortedRules.length / 2))
-            .map((rule, index) => {
-              const currentParagraph = rule.reference.slice(0, 2);
-              const previousParagraph =
-                index > 0
-                  ? sortedRules
-                      .slice(Math.ceil(sortedRules.length / 2))
-                      [index - 1].reference.slice(0, 2)
-                  : null;
-              const isFirstInParagraph = currentParagraph !== previousParagraph;
 
-              return (
-                <div
-                  key={rule.reference}
-                  onClick={() => onRuleSelect(rule)}
-                  className="cursor-pointer hover:bg-gray-100 rounded px-2 py-1 text-sm flex items-start"
+                  {isExpanded && (
+                    <div className='ml-6 mt-0.5 flex flex-col'>
+                      {groupRules.map(rule => (
+                        <RuleItem
+                          key={rule.reference}
+                          rule={rule}
+                          onSelect={() => onRuleSelect(rule)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <Tooltip
+                  content={<RuleTooltip rule={groupRules[0]} />}
+                  position='right'
+                  className='block w-full'
                 >
-                  <div className="w-9 shrink-0">
-                    {isFirstInParagraph && (
-                      <span className="text-gray-500 font-medium">
-                        §{currentParagraph}
-                      </span>
-                    )}
+                  <div
+                    className='flex items-center px-2 py-1.5 font-medium rounded cursor-pointer hover:bg-gray-100 w-full'
+                    onClick={() => onRuleSelect(groupRules[0])}
+                  >
+                    <span className='text-sm truncate'>{group}</span>
                   </div>
-                  <span className="text-gray-900 break-words">
-                    {rule.title}
-                  </span>
-                </div>
-              );
-            })}
+                </Tooltip>
+              )}
+            </div>
+          )
+        })}
+        <div className='w-full border-t pt-0.5'>
+          <div
+            className='flex items-center px-2 py-1 font-medium rounded cursor-pointer hover:bg-gray-100 w-full'
+            onClick={() => onRuleSelect(undefined)}
+          >
+            <span className='text-sm truncate'>
+              {t(language, 'ifgSelector.genericRedaction')}
+            </span>
+          </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

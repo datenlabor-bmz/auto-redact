@@ -6,6 +6,7 @@ export interface IFGRule {
   title: string;
   full_text: string;
   url: string;
+  group: string;
 }
 
 export interface SecuredactHighlight extends IHighlight {

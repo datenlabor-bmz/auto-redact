@@ -52,6 +52,7 @@ export const translations = {
     ifgSelector: {
       placeholder: "Select IFG reason...",
       viewLaw: "View law →",
+      genericRedaction: "Generic Redaction",
     },
   },
   de: {
@@ -107,6 +108,7 @@ export const translations = {
     ifgSelector: {
       placeholder: "IFG-Grund auswählen...",
       viewLaw: "Gesetz ansehen →",
+      genericRedaction: "Generische Schwärzung",
     },
   },
 } as const;

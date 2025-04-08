@@ -183,21 +183,11 @@ function AppContent() {
                       <IFGRulePopupSelector
                         rules={ifgRules}
                         onRuleSelect={(rule) => {
-                          if (rule) {
-                            addHighlight({
-                              content,
-                              position,
-                              comment: { text: "", emoji: "" },
-                              ifgRule: rule,
-                            });
-                          }
-                          hideTipAndSelection();
-                        }}
-                        onSimpleHighlight={() => {
                           addHighlight({
                             content,
                             position,
                             comment: { text: "", emoji: "" },
+                            ifgRule: rule,
                           });
                           hideTipAndSelection();
                         }}

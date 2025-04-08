@@ -90,6 +90,7 @@ export function Sidebar({
 
             {currentPdfFile && (
               <>
+                <RedactionHints />
                 <PromptInput
                   customPrompt={customPrompt}
                   setCustomPrompt={setCustomPrompt}
@@ -103,7 +104,6 @@ export function Sidebar({
                   }
                   isAnalyzing={isAnalyzing}
                 />
-                <RedactionHints />
               </>
             )}
 
