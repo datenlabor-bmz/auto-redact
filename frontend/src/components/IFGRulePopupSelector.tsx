@@ -22,11 +22,15 @@ function groupRulesByGroup (rules: IFGRule[]) {
 }
 
 // Tooltip content component for a rule
-const RuleTooltip = ({ rule }: { rule: IFGRule }) => (
+const RuleTooltip = ({ rule, maxLength = 500 }: { rule: IFGRule, maxLength?: number }) => (
   <div className='space-y-2'>
     <div className='font-medium'>IFG {rule.reference}</div>
     <div className='text-xs'>{rule.reason}</div>
-    <div className='text-xs italic mt-1'>{rule.full_text}</div>
+    <div className='text-xs italic mt-1'>
+      {rule.full_text && rule.full_text.length > maxLength
+        ? `${rule.full_text.substring(0, maxLength)}...`
+        : rule.full_text}
+    </div>
     {rule.url && (
       <a
         href={rule.url}
