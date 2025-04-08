@@ -2,35 +2,27 @@
 # - https://pymupdf.readthedocs.io/en/latest/page.html#Page.add_redact_annot
 # - https://pymupdf.readthedocs.io/en/latest/annot.html
 
+import base64
 import io
 import json
 import os
-from typing import Literal
+from typing import Literal, cast
+
 import pymupdf
 from fastapi import (
+    APIRouter,
     FastAPI,
     File,
     Form,
     HTTPException,
     Response,
     UploadFile,
-    APIRouter,
 )
-from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
-import base64
-from pymupdf import Document, Page, Annot
 from processing import process_pdf_streaming
-from typing import cast
-
-
-from requests import get
-print("proxy", os.getenv("HTTP_PROXY"))
-print("a", get("http://example.com"))
-print("b", get("http://example.com", proxies=os.getenv("HTTP_PROXY")))
-
-
+from pymupdf import Annot, Document, Page
 
 app = FastAPI()
 api_router = APIRouter()

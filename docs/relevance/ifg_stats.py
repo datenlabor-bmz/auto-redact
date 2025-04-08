@@ -10,14 +10,14 @@
 # ]
 # ///
 
+import re
+
 import altair as alt
 import pandas as pd
 from joblib.memory import Memory
 from requests import get
 from rich import print
 from rich.progress import track
-from time import sleep
-import re
 
 memory = Memory(location=".cache", verbose=0)
 get = memory.cache(get)
@@ -78,7 +78,8 @@ chart_by_ministry = (
     .facet(
         row="ministry:N",
         align="each",
-    ).interactive()
+    )
+    .interactive()
 )
 
 # make chart with timeline overall
@@ -126,7 +127,10 @@ def retrieve_attachment_data(request_id):
         a
         for alist in attachments
         for a in alist
-        if a["is_pdf"] and not re.search(r"bescheid|schreiben|antwort|datenschutz|ifg|eingang", a["name"].lower())
+        if a["is_pdf"]
+        and not re.search(
+            r"bescheid|schreiben|antwort|datenschutz|ifg|eingang", a["name"].lower()
+        )
     ]
 
 
@@ -151,4 +155,6 @@ hist = (
 hist.save("docs/relevance/ifg_attachments_histogram.svg")
 
 print(f"Average number of attachments per request: {lengths['length'].mean(): .2f}")
-print(f"Proportion of requests with no attachments: {lengths[lengths['length'] == 0].shape[0] / len(lengths): .2f}")
+print(
+    f"Proportion of requests with no attachments: {lengths[lengths['length'] == 0].shape[0] / len(lengths): .2f}"
+)

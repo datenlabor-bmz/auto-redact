@@ -1,7 +1,7 @@
 import json
 import os
-from typing import Generator
 from textwrap import dedent
+from typing import Generator
 
 from dotenv import load_dotenv
 from litellm import completion
@@ -16,7 +16,9 @@ ifg_text = "\n\n".join(
 )
 
 
-def process_pdf_streaming(doc: Document, prompt: str, verbose: bool = False) -> Generator:
+def process_pdf_streaming(
+    doc: Document, prompt: str, verbose: bool = False
+) -> Generator:
     # Collect all pages with page numbers
     all_pages_text = []
     for page_num, page in enumerate(doc, 1):
