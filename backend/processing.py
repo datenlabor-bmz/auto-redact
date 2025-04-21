@@ -9,7 +9,7 @@ from pymupdf import Document
 
 load_dotenv(override=True)
 
-with open("rules/informationsfreiheitsgesetz.json", "r", encoding="utf-8") as f:
+with open("../rules/informationsfreiheitsgesetz.json", "r", encoding="utf-8") as f:
     ifg_rules = json.load(f)["rules"]
 ifg_text = "\n\n".join(
     [f"{rule['reference']}: {rule['title']}\n{rule['full_text']}" for rule in ifg_rules]
