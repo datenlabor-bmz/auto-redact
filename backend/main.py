@@ -22,7 +22,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 # from processing_ai import process_pdf_streaming
-from processing_ner_stanza import process_pdf_streaming
+from processing_ner_flair import process_pdf_streaming
 from annotations import apply_annotations, convert_annotations_to_highlights
 from pymupdf import Document
 
