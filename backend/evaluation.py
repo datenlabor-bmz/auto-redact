@@ -1,7 +1,7 @@
 import difflib
 
 import pymupdf
-from processing import ifg_text, process_pdf
+from processing_ai import ifg_text, process_pdf
 from pymupdf import Document
 
 

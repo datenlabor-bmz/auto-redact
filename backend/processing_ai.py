@@ -5,7 +5,7 @@ from typing import Generator
 
 from dotenv import load_dotenv
 from litellm import completion
-from pymupdf import Document
+from pymupdf import Document, Page, Rect
 
 load_dotenv(override=True)
 
@@ -14,6 +14,53 @@ with open("../rules/informationsfreiheitsgesetz.json", "r", encoding="utf-8") as
 ifg_text = "\n\n".join(
     [f"{rule['reference']}: {rule['title']}\n{rule['full_text']}" for rule in ifg_rules]
 )
+
+def rect_obj(coords, page: Page):
+    return {
+        "x1": coords[0],
+        "y1": coords[1],
+        "x2": coords[2],
+        "y2": coords[3],
+        "width": page.rect.width,
+        "height": page.rect.height,
+        "pageNumber": page.number + 1,
+    }
+
+def bounding_rect(rects: list[Rect]):
+    x1 = min([rect.x0 for rect in rects])
+    y1 = min([rect.y0 for rect in rects])
+    x2 = max([rect.x1 for rect in rects])
+    y2 = max([rect.y1 for rect in rects])
+    return (x1, y1, x2, y2)
+
+def get_highlight(page: Page, redact_text: str, ifg_rule: str, context: str | None = None):
+    if context:
+        context_matches = page.search_for(context)
+        if len(context_matches) >= 1:
+            context_rect = bounding_rect(context_matches)
+            matches = page.search_for(redact_text, clip=context_rect)
+        else:
+            matches = page.search_for(redact_text)
+    else:
+        matches = page.search_for(redact_text)
+    if not matches:
+        print(f"Warning: No matches found for '{redact_text}' on page {page.number}")
+    if matches:
+        rects = [rect_obj(rect, page) for rect in matches]
+        # print([page.get_textbox(match) for match in matches])
+        highlight = {
+            "content": {"text": redact_text},
+            "comment": {"text": "", "emoji": ""},
+            "id": hash(str(rects)),
+            "position": {
+                "boundingRect": rect_obj(bounding_rect(matches), page),
+                "rects": rects,
+                "pageNumber": page.number + 1,
+            },
+            "ifgRule": ifg_rule,
+        }
+        return highlight
+    return None
 
 
 def process_pdf_streaming(
@@ -159,36 +206,9 @@ def process_pdf_streaming(
                         if current_page and redact_text:
                             try:
                                 page = doc[current_page - 1]
-                                matches = page.search_for(redact_text)
-                                if matches:
-                                    if len(matches) > 1:
-                                        print(
-                                            f"Warning: Multiple matches ({len(matches)}) found for '{redact_text}' on page {current_page}"
-                                        )
-                                        # TODO: make a separate prompt to identify the correct match
-                                    for rect in matches:
-                                        page_rect = page.rect
-                                        rect = {
-                                            "x1": rect[0],
-                                            "y1": rect[1],
-                                            "x2": rect[2],
-                                            "y2": rect[3],
-                                            "width": page_rect.width,  # page width
-                                            "height": page_rect.height,  # page height
-                                            "pageNumber": current_page,
-                                        }
-                                        highlight = {
-                                            "content": {"text": redact_text},
-                                            "comment": {"text": "", "emoji": ""},
-                                            "id": hash(str(rect)),
-                                            "position": {
-                                                "boundingRect": rect,
-                                                "rects": [rect],
-                                                "pageNumber": current_page,
-                                            },
-                                            "ifgRule": ifg_rule,
-                                        }
-                                        yield f"data: {json.dumps(highlight)}\n\n"
+                                highlight = get_highlight(page, redact_text, ifg_rule)
+                                if highlight:
+                                    yield f"data: {json.dumps(highlight)}\n\n"
 
                             except Exception as e:
                                 print(f"Error processing redaction: {e}")
