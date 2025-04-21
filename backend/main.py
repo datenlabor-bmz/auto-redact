@@ -21,7 +21,8 @@ from fastapi import (
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from processing import process_pdf_streaming
+# from processing_ai import process_pdf_streaming
+from processing_ner import process_pdf_streaming
 from annotations import apply_annotations, convert_annotations_to_highlights
 from pymupdf import Document
 
